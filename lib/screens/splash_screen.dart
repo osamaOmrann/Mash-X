@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
             size: width * .25,
           ),
           Text(
-            'Mash',
+            'MashX',
             style: Theme.of(context)
                 .textTheme
                 .headlineMedium
