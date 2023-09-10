@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('Mash', style: TextStyle(color: Color(0xff98a6f3), fontSize: width * .061),),
+                  Text('Mash', style: TextStyle(color: Color(0xff98a6f3), fontSize: width * .061, fontFamily: 'backHome', fontWeight: FontWeight.bold),),
                   Text(' X', style: TextStyle(fontSize: width * .0661, color: Colors.red),),
                   Spacer(),
                   IconButton(onPressed: () {

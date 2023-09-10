@@ -172,4 +172,13 @@ class SignInProvider extends ChangeNotifier {
     final SharedPreferences s = await SharedPreferences.getInstance();
     s.clear();
   }
+
+  void phoneNumberUser(User user, email, name) {
+    _name = name;
+    _email = email;
+    _imageUrl = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+    _uid = firebaseAuth.currentUser?.uid;
+    _provider = 'PHONE';
+    notifyListeners();
+  }
 }

@@ -28,3 +28,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+var basicColor = Color(0xff6850a4);

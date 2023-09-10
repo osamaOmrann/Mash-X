@@ -4,20 +4,20 @@ import 'package:mash/data_base/internet_provider.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
 import 'package:mash/helpers/next_screen.dart';
 import 'package:mash/helpers/snack_bar.dart';
+import 'package:mash/screens/auth/login_screen.dart';
 import 'package:mash/screens/auth/phone_auth_screen.dart';
-import 'package:mash/screens/auth/register_screen.dart';
 import 'package:mash/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
   final RoundedLoadingButtonController googleController =
       RoundedLoadingButtonController();
@@ -89,13 +89,13 @@ class _LoginScreenState extends State<LoginScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Don\'t have account?'),
+              Text('Already have an account?'),
               TextButton(
                   onPressed: () {
-                    nextScreenReplace(context, RegisterScreen());
+                    nextScreenReplace(context, LoginScreen());
                   },
                   child: Text(
-                    'Sign up',
+                    'Login',
                     style: TextStyle(color: Color(0xff6850a4)),
                   ))
             ],
