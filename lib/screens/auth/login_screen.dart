@@ -4,6 +4,7 @@ import 'package:mash/data_base/internet_provider.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
 import 'package:mash/helpers/next_screen.dart';
 import 'package:mash/helpers/snack_bar.dart';
+import 'package:mash/main.dart';
 import 'package:mash/screens/auth/phone_auth_screen.dart';
 import 'package:mash/screens/auth/register_screen.dart';
 import 'package:mash/screens/home_screen.dart';
@@ -117,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       await sp.signInWithGoogle().then((value) {
         if (sp.hasError == true) {
-          openSnackBar(context, sp.errorCode.toString(), Color(0xff6850a4));
+          openSnackBar(context, sp.errorCode.toString(), basicColor);
           googleController.reset();
         } else {
           //Checking User Existence

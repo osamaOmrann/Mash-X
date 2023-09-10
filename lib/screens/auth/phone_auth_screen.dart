@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -34,6 +33,15 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
     var width = MediaQuery.of(context).size.width,
         height = MediaQuery.of(context).size.height;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: basicColor,),
+          onPressed: () => nextScreenReplace(context, LoginScreen()),
+        ),
+      ),
         body: Padding(
       padding: EdgeInsets.symmetric(horizontal: width * .05),
       child: Form(
@@ -149,12 +157,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
         ),
       ),
     ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: basicColor,
-        onPressed: () => nextScreenReplace(context, LoginScreen()),
-        child: Icon(Icons.arrow_back),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
