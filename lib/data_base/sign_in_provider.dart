@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -41,6 +44,13 @@ class SignInProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future setSignIn() async {
+    final SharedPreferences s = await SharedPreferences.getInstance();
+    s.setBool('signed_in', true);
+    _isSignedIn = true;
+    notifyListeners();
+  }
+
   //Sign In With Google
   Future signInWithGoogle() async {
     final GoogleSignInAccount? googleSignInAccount =
@@ -55,7 +65,8 @@ class SignInProvider extends ChangeNotifier {
             idToken: googleSignInAuthentication.idToken);
 
         //Signing In To Firebase User Instance
-        final User userDetails = (await firebaseAuth.signInWithCredential(credential)).user!;
+        final User userDetails =
+            (await firebaseAuth.signInWithCredential(credential)).user!;
 
         //Save Data
         _name = userDetails.displayName;
@@ -65,7 +76,7 @@ class SignInProvider extends ChangeNotifier {
         _uid = userDetails.uid;
         notifyListeners();
       } on FirebaseAuthException catch (e) {
-        switch(e.code) {
+        switch (e.code) {
           case "account-exists-with-different-credential":
             _errorCode = "You already have an account";
             _hasError = true;
@@ -85,6 +96,65 @@ class SignInProvider extends ChangeNotifier {
     } else {
       _hasError = true;
       notifyListeners();
+    }
+  }
+
+  Future getUserDataFromFireStore(uid) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((DocumentSnapshot snapshot) => {
+              _uid = snapshot['uid'],
+              _name = snapshot['name'],
+              _email = snapshot['email'],
+              _imageUrl = snapshot['image_url'],
+              _provider = snapshot['provider'],
+            });
+  }
+
+  Future saveDataToFireStore() async {
+    final DocumentReference r = FirebaseFirestore.instance.collection('users').doc(uid);
+    await r.set({
+      'name': _name,
+      'email': _email,
+      'uid': _uid,
+      'image_url': _imageUrl,
+      'provider': _provider
+    });
+    notifyListeners();
+  }
+
+  Future saveDataToSharedPreferences() async {
+    final SharedPreferences s = await SharedPreferences.getInstance();
+    await s.setString('name', _name!);
+    await s.setString('email', _email!);
+    await s.setString('uid', _uid!);
+    await s.setString('image_url', _imageUrl!);
+    await s.setString('provider', _provider!);
+    notifyListeners();
+  }
+
+  Future getDataFromSharedPreferences() async {
+    final SharedPreferences s = await SharedPreferences.getInstance();
+    _name = s.getString('name');
+    _email = s.getString('email');
+    _imageUrl = s.getString('image_url');
+    _uid = s.getString('uid');
+    _provider = s.getString('provider');
+    notifyListeners();
+  }
+
+  //Check User Existence In Cloud FireStore
+  Future<bool> checkUserExists() async {
+    DocumentSnapshot snap =
+        await FirebaseFirestore.instance.collection('users').doc(_uid).get();
+    if (snap.exists) {
+      log('Existing User');
+      return true;
+    } else {
+      log('New User');
+      return false;
     }
   }
 

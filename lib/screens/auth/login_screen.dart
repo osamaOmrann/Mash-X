@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mash/data_base/internet_provider.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
+import 'package:mash/helpers/next_screen.dart';
 import 'package:mash/helpers/snack_bar.dart';
+import 'package:mash/screens/auth/phone_auth_screen.dart';
+import 'package:mash/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -67,7 +70,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               RoundedLoadingButton(
                 controller: phoneController,
-                onPressed: () {},
+                onPressed: () {
+                  nextScreen(context, PhoneAuthScreen());
+                  phoneController.reset();
+                },
                 child: Icon(FontAwesomeIcons.phone),
                 successColor: Color(0xff6850a4),
                 color: Color(0xff6850a4),
@@ -104,9 +110,27 @@ class _LoginScreenState extends State<LoginScreen> {
           googleController.reset();
         } else {
           //Checking User Existence
-
+          sp.checkUserExists().then((value) async {
+            if(value == true) {
+              await sp.getUserDataFromFireStore(sp.uid).then((value) => sp.saveDataToSharedPreferences().then((value) => sp.setSignIn().then((value) {
+                googleController.success();
+                handleAfterSigningIn();
+              })));
+            } else {
+              sp.saveDataToFireStore().then((value) => sp.saveDataToSharedPreferences().then((value) => sp.setSignIn().then((value) {
+                googleController.success();
+                handleAfterSigningIn();
+              })));
+            }
+          });
         }
       });
     }
+  }
+
+  handleAfterSigningIn() {
+    Future.delayed(Duration(milliseconds: 1000)).then((value) {
+      nextScreenReplace(context, HomeScreen());
+    });
   }
 }
