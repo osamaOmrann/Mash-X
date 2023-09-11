@@ -34,6 +34,9 @@ class SignInProvider extends ChangeNotifier {
   String? _imageUrl;
   String? get imageUrl => _imageUrl;
 
+  String? _password;
+  String? get password => _password;
+
   SignInProvider() {
     checkSignInUser();
   }
@@ -74,6 +77,7 @@ class SignInProvider extends ChangeNotifier {
         _imageUrl = userDetails.photoURL;
         _provider = "GOOGLE";
         _uid = userDetails.uid;
+        _password = 'null';
         notifyListeners();
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
@@ -110,6 +114,7 @@ class SignInProvider extends ChangeNotifier {
               _email = snapshot['email'],
               _imageUrl = snapshot['image_url'],
               _provider = snapshot['provider'],
+      _password = snapshot['password']
             });
   }
 
@@ -120,7 +125,8 @@ class SignInProvider extends ChangeNotifier {
       'email': _email,
       'uid': _uid,
       'image_url': _imageUrl,
-      'provider': _provider
+      'provider': _provider,
+      'password': _password
     });
     notifyListeners();
   }
@@ -132,6 +138,7 @@ class SignInProvider extends ChangeNotifier {
     await s.setString('uid', _uid!);
     await s.setString('image_url', _imageUrl!);
     await s.setString('provider', _provider!);
+    await s.setString('password', _password!);
     notifyListeners();
   }
 
@@ -142,6 +149,7 @@ class SignInProvider extends ChangeNotifier {
     _imageUrl = s.getString('image_url');
     _uid = s.getString('uid');
     _provider = s.getString('provider');
+    _password = s.getString('password');
     notifyListeners();
   }
 
@@ -179,6 +187,17 @@ class SignInProvider extends ChangeNotifier {
     _imageUrl = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
     _uid = firebaseAuth.currentUser?.uid;
     _provider = 'PHONE';
+    _password = 'null';
+    notifyListeners();
+  }
+
+  void emailPasswordUser(User user, email, name, password) {
+    _name = name;
+    _email = email;
+    _imageUrl = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+    _uid = firebaseAuth.currentUser?.uid;
+    _password = password;
+    _provider = 'EMAIL AND PASSWORD';
     notifyListeners();
   }
 }

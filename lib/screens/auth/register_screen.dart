@@ -145,7 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   obscureText: securePasswordI,
                   decoration: InputDecoration(
                       prefixIcon: Icon(Icons.password, color: basicColor),
-                      suffixIcon: InkWell(
+                      suffixIcon: GestureDetector(
                           onTap: () {
                             securePasswordI = !securePasswordI;
                             setState(() {});
@@ -182,7 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   obscureText: securePasswordII,
                   decoration: InputDecoration(
                       prefixIcon: Icon(Icons.password, color: basicColor),
-                      suffixIcon: InkWell(
+                      suffixIcon: GestureDetector(
                           onTap: () {
                             securePasswordII = !securePasswordII;
                             setState(() {});
@@ -207,6 +207,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: height * .021,
                 ),
                 RoundedLoadingButton(
+                    successColor: basicColor,
                     color: basicColor,
                     borderRadius: width * .05,
                     controller: registerController,
@@ -226,8 +227,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: googleController,
                       onPressed: handleGoogleSignIn,
                       child: Icon(FontAwesomeIcons.google),
-                      successColor: Color(0xff6850a4),
-                      color: Color(0xff6850a4),
+                      successColor: basicColor,
+                      color: basicColor,
                       width: width * .13,
                       borderRadius: width * .05,
                     ),
@@ -319,14 +320,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
     var ip = context.read<InternetProvider>();
     await ip.checkInternetConnection();
     if (ip.hasInternet == false) {
-      openSnackBar(
-          context, 'Check your internet connection', basicColor);
+      openSnackBar(context, 'Check your internet connection', basicColor);
       registerController.reset();
     } else if (formKey.currentState?.validate() == false) {
       registerController.reset();
       return;
     }
-    sp.firebaseAuth.createUserWithEmailAndPassword(
-        email: emailController.text, password: passwordController.text).then((userCredential) {});
+    sp.firebaseAuth
+        .createUserWithEmailAndPassword(
+            email: emailController.text, password: passwordController.text)
+        .then((userCredential) async {
+      if (sp.hasError == true) {
+        openSnackBar(context, sp.errorCode.toString(), basicColor);
+        registerController.reset();
+      } else {
+        User user = (await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: emailController.text, password: passwordController.text))
+          .user!;
+        sp.emailPasswordUser(user, emailController.text, nameController.text, passwordController.text);
+        sp.saveDataToFireStore().then((value) => sp
+            .saveDataToSharedPreferences()
+            .then((value) => sp.setSignIn().then((value) {
+          registerController.success();
+          handleAfterSigningIn();
+        })));
+      }
+    }).onError((error, stackTrace) {
+      if (error
+          .toString()
+          .contains('The email address is already in use by another account'))
+        openSnackBar(
+            context,
+            'The email address is already in use by another account',
+            basicColor);
+      else
+        openSnackBar(context, error.toString(), basicColor);
+      registerController.reset();
+    });
   }
 }

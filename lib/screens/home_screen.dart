@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
 import 'package:mash/helpers/next_screen.dart';
+import 'package:mash/main.dart';
 import 'package:mash/screens/home_bottom_sheet.dart';
 import 'package:mash/screens/auth/login_screen.dart';
 import 'package:provider/provider.dart';
@@ -54,17 +55,72 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          Center(
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(
-                sp.imageUrl ?? ''
-              ),
-              radius: 50,
+          SizedBox(height: height * .03,),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: width * .05),
+            child: Column(
+              children: [
+                TextField(
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(),
+                    hintText: 'Search Here',
+                    prefixIcon: Icon(Icons.search, color: Colors.black,),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(),
+                      borderRadius: BorderRadius.circular(width * .07)
+                    )
+                  ),
+                ),
+                SizedBox(height: height * .015,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: width * .05, vertical: height * .01),
+                      decoration: BoxDecoration(
+                        color: basicColor,
+                        borderRadius: BorderRadius.circular(width * .05)
+                      ),
+                      child: Text('Kl-Suche', style: TextStyle(color: Colors.white),),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: width * .05, vertical: height * .01),
+                      decoration: BoxDecoration(
+                        color: basicColor,
+                        borderRadius: BorderRadius.circular(width * .05)
+                      ),
+                      child: Text('Fähigkeit', style: TextStyle(color: Colors.white),),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: width * .05, vertical: height * .01),
+                      decoration: BoxDecoration(
+                        color: basicColor,
+                        borderRadius: BorderRadius.circular(width * .05)
+                      ),
+                      child: Text('Kategorie', style: TextStyle(color: Colors.white),),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
-          Center(
-            child: Text(
-              'From ${sp.provider}'
+          SizedBox(height: height * .025,),
+          SizedBox(
+            height: height * .19,
+            child: Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: width * .03),
+                scrollDirection: Axis.horizontal,
+                physics: BouncingScrollPhysics(),
+                itemCount: 21,
+                  itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(right: width * .03),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(width * .05),
+                        child: Image.asset('assets/images/company.jpg', width: width * .41, fit: BoxFit.cover )),
+                  );
+                  }),
             ),
           )
         ],
