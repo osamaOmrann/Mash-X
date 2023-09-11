@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
-import 'package:mash/helpers/next_screen.dart';
 import 'package:mash/main.dart';
 import 'package:mash/widgets/home_bottom_sheet.dart';
-import 'package:mash/screens/auth/login_screen.dart';
 import 'package:mash/widgets/job_card.dart';
 import 'package:mash/widgets/job_offer_widget.dart';
 import 'package:provider/provider.dart';
@@ -143,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 physics: BouncingScrollPhysics(),
                 itemCount: 21,
                 itemBuilder: (context, index) {
-              return JobCard(sp.imageUrl ?? '');
+              return JobCard(sp.imageUrl ?? 'https://cdn-icons-png.flaticon.com/512/149/149071.png');
             }))
           ],
         ),

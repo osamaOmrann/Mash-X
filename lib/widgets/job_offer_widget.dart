@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class JobOfferWidget extends StatelessWidget {
-  const JobOfferWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,8 @@ class JobOfferWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Company name'),
-              Text('Job title ...'),
+              SizedBox(height: height * .01,),
+              Text('Job title ...', style: TextStyle(color: Colors.grey),),
             ],
           )
         ],
