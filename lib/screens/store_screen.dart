@@ -18,35 +18,37 @@ class _StoreScreenState extends State<StoreScreen> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width,
         height = MediaQuery.of(context).size.height;
-    return RefreshIndicator(
-      key: refreshKey,
-      onRefresh: refreshList,
-      child: StreamBuilder<QuerySnapshot<Product>>(
-        builder: (buildContext, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                  'Error loading data try again later'),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: SizedBox(
-                height: width * .05,
-                width: width * .05,
-                  child: CircularProgressIndicator(color: basicColor)),
-            );
-          }
-          var data = snapshot.data?.docs.map((e) => e.data()).toList();
-          return Scaffold(
-            appBar: PreferredSize(
-                preferredSize: Size.fromHeight(height * .045), // here the desired height
-                child: AppBar(
-                  backgroundColor: basicColor,
-                  title: Text('MashX Store 🔥'),
-                )
-            ),
-            body: GridView.builder(
+    return StreamBuilder<QuerySnapshot<Product>>(
+      builder: (buildContext, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+                'Error loading data try again later'),
+          );
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: SizedBox(
+              height: width * .05,
+              width: width * .05,
+                child: CircularProgressIndicator(color: basicColor)),
+          );
+        }
+        var data = snapshot.data?.docs.map((e) => e.data()).toList();
+        return Scaffold(
+          appBar: PreferredSize(
+              preferredSize: Size.fromHeight(height * .045), // here the desired height
+              child: AppBar(
+                backgroundColor: basicColor,
+                title: Text('MashX Store 🔥'),
+              )
+          ),
+          body: RefreshIndicator(
+            key: refreshKey,
+            onRefresh: refreshList,
+            color: basicColor,
+            child: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                childAspectRatio: .7,
                   crossAxisCount: 2),
               physics: BouncingScrollPhysics(),
               itemBuilder: (buildContext, index) {
@@ -66,10 +68,10 @@ class _StoreScreenState extends State<StoreScreen> {
               },
               itemCount: data!.length,
             ),
-          );
-        },
-        stream: DataBase.listenForProductsRealTimeUpdates(),
-      ),
+          ),
+        );
+      },
+      stream: DataBase.listenForProductsRealTimeUpdates(),
     );
   }
 
