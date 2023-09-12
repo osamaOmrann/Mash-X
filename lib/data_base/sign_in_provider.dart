@@ -37,6 +37,24 @@ class SignInProvider extends ChangeNotifier {
   String? _password;
   String? get password => _password;
 
+  String? _phoneNumber;
+  String? get phoneNumber => _phoneNumber;
+
+  DateTime? _birthDate;
+  DateTime? get birthDate => _birthDate;
+
+  String? _city;
+  String? get city => _city;
+
+  String? _stName;
+  String? get stName => _stName;
+
+  int? _buildingNumber;
+  int? get buildingNumber => _buildingNumber;
+
+  String? _postalCode;
+  String? get postalCode => _postalCode;
+
   SignInProvider() {
     checkSignInUser();
   }
@@ -78,6 +96,12 @@ class SignInProvider extends ChangeNotifier {
         _provider = "GOOGLE";
         _uid = userDetails.uid;
         _password = 'null';
+        _phoneNumber = 'null';
+        _birthDate = DateTime.now();
+        _city = 'null';
+        _stName = 'null';
+        _buildingNumber = 0;
+        _postalCode = 'null';
         notifyListeners();
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
@@ -114,19 +138,33 @@ class SignInProvider extends ChangeNotifier {
               _email = snapshot['email'],
               _imageUrl = snapshot['image_url'],
               _provider = snapshot['provider'],
-      _password = snapshot['password']
+              _password = snapshot['password'],
+              _phoneNumber = snapshot['phone_number'],
+              _birthDate =
+                  DateTime.fromMillisecondsSinceEpoch(snapshot['birth_date']),
+              _city = snapshot['city'],
+              _stName = snapshot['st_name'],
+              _buildingNumber = snapshot['building_number'],
+              _postalCode = snapshot['postal_code'],
             });
   }
 
   Future saveDataToFireStore() async {
-    final DocumentReference r = FirebaseFirestore.instance.collection('users').doc(uid);
+    final DocumentReference r =
+        FirebaseFirestore.instance.collection('users').doc(uid);
     await r.set({
       'name': _name,
       'email': _email,
       'uid': _uid,
       'image_url': _imageUrl,
       'provider': _provider,
-      'password': _password
+      'password': _password,
+      'phone_number': _phoneNumber,
+      'birth_date': _birthDate?.millisecondsSinceEpoch,
+      'city': _city,
+      'st_name': _stName,
+      'building_number': _buildingNumber,
+      'postal_code': _postalCode,
     });
     notifyListeners();
   }
@@ -139,6 +177,12 @@ class SignInProvider extends ChangeNotifier {
     await s.setString('image_url', _imageUrl!);
     await s.setString('provider', _provider!);
     await s.setString('password', _password!);
+    await s.setString('phone_number', _phoneNumber!);
+    await s.setString('birth_date', _birthDate!.millisecondsSinceEpoch.toString());
+    await s.setString('city', _city!);
+    await s.setString('st_name', _stName!);
+    await s.setInt('building_number', _buildingNumber!);
+    await s.setString('postal_code', _postalCode!);
     notifyListeners();
   }
 
@@ -150,6 +194,12 @@ class SignInProvider extends ChangeNotifier {
     _uid = s.getString('uid');
     _provider = s.getString('provider');
     _password = s.getString('password');
+    _phoneNumber = s.getString('phone_number');
+    _birthDate = DateTime.fromMillisecondsSinceEpoch(int.parse(s.getString('birth_date')!));
+    _city = s.getString('city');
+    _stName = s.getString('st_name');
+    _buildingNumber = int.parse(s.getString('building_number')!);
+    _postalCode = s.getString('postal_code');
     notifyListeners();
   }
 
@@ -188,6 +238,7 @@ class SignInProvider extends ChangeNotifier {
     _uid = firebaseAuth.currentUser?.uid;
     _provider = 'PHONE';
     _password = 'null';
+    _phoneNumber = firebaseAuth.currentUser?.phoneNumber;
     notifyListeners();
   }
 

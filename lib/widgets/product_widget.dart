@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:mash/data_base/product.dart';
 import 'package:mash/main.dart';
 
@@ -108,30 +107,6 @@ class ProductWidget extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     )
-                  ],
-                ),
-                Row(
-                  children: [
-                    RatingBar.builder(
-                      ignoreGestures: true,
-                      maxRating: 5,
-                      itemSize: width * .05,
-                      initialRating: (product.rate_percentage??0)/20,
-                      minRating: 0,
-                      direction: Axis.horizontal,
-                      allowHalfRating: true,
-                      itemCount: 5,
-                      itemPadding: EdgeInsets.symmetric(),
-                      itemBuilder: (context, _) => Icon(
-                        Icons.star,
-                        color: basicColor,
-                        size: 5,
-                      ),
-                      onRatingUpdate: (rating) {
-                        print(rating);
-                      },
-                    ),
-                    Text('(${product.rate_percentage ?? ''})')
                   ],
                 ),
                 Container(

@@ -169,6 +169,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       submitController.reset();
     } else {
       if (_formKey.currentState!.validate() && phoneNumber.length > 5) {
+        sp.userSignOut();
         FirebaseAuth.instance.verifyPhoneNumber(
             phoneNumber: mobile,
             verificationCompleted: (AuthCredential credential) async {
@@ -184,6 +185,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                   builder: (context) {
                     var width = MediaQuery.of(context).size.width,
                         height = MediaQuery.of(context).size.height;
+                    RoundedLoadingButtonController confirmController = RoundedLoadingButtonController();
                     return AlertDialog(
                       title: Text('Enter code'),
                       content: Column(
@@ -212,10 +214,9 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                           SizedBox(
                             height: 10,
                           ),
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: basicColor,
-                              ),
+                          RoundedLoadingButton(
+                            controller: confirmController,
+                              color: basicColor,
                               onPressed: () async {
                                 final code = otpController.text.trim();
                                 AuthCredential authCredential =

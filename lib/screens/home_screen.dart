@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
@@ -78,13 +80,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: width * .05, vertical: height * .01),
-                        decoration: BoxDecoration(
-                          color: basicColor,
-                          borderRadius: BorderRadius.circular(width * .05)
+                      GestureDetector(
+                        onTap: () {
+                          log(sp.firebaseAuth.currentUser!.phoneNumber ?? '');
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: width * .05, vertical: height * .01),
+                          decoration: BoxDecoration(
+                            color: basicColor,
+                            borderRadius: BorderRadius.circular(width * .05)
+                          ),
+                          child: Text('Kl-Suche', style: TextStyle(color: Colors.white),),
                         ),
-                        child: Text('Kl-Suche', style: TextStyle(color: Colors.white),),
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: width * .05, vertical: height * .01),

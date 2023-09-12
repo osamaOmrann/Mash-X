@@ -202,6 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
           context, 'Check your internet connection', Color(0xff6850a4));
       googleController.reset();
     } else {
+      sp.userSignOut();
       await sp.signInWithGoogle().then((value) {
         if (sp.hasError == true) {
           openSnackBar(context, sp.errorCode.toString(), basicColor);
@@ -243,6 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
      try {
+       sp.userSignOut();
       sp.firebaseAuth
           .signInWithEmailAndPassword(
               email: emailController.text, password: passwordController.text)

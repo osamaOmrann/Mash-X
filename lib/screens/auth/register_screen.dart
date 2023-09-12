@@ -281,6 +281,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           context, 'Check your internet connection', Color(0xff6850a4));
       googleController.reset();
     } else {
+      sp.userSignOut();
       await sp.signInWithGoogle().then((value) {
         if (sp.hasError == true) {
           openSnackBar(context, sp.errorCode.toString(), Color(0xff6850a4));
@@ -326,6 +327,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       registerController.reset();
       return;
     }
+    sp.userSignOut();
     sp.firebaseAuth
         .createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text)
