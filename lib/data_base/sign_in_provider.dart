@@ -96,12 +96,6 @@ class SignInProvider extends ChangeNotifier {
         _provider = "GOOGLE";
         _uid = userDetails.uid;
         _password = 'null';
-        _phoneNumber = 'null';
-        _birthDate = DateTime.now();
-        _city = 'null';
-        _stName = 'null';
-        _buildingNumber = 0;
-        _postalCode = 'null';
         notifyListeners();
       } on FirebaseAuthException catch (e) {
         switch (e.code) {

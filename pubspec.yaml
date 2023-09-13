@@ -49,6 +49,8 @@ dependencies:
   cached_network_image: ^3.2.3
   path_provider: any
   flutter_cache_manager: any
+  image_picker: ^1.0.4
+  firebase_storage: any
 
 dev_dependencies:
   flutter_test:
