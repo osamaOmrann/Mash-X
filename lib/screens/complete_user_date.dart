@@ -7,9 +7,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mash/data_base/data_base.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
 import 'package:mash/helpers/next_screen.dart';
+import 'package:mash/helpers/snack_bar.dart';
 import 'package:mash/helpers/validation_utils.dart';
 import 'package:mash/main.dart';
 import 'package:mash/screens/auth/login_screen.dart';
+import 'package:mash/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -21,20 +23,48 @@ class CompleteUserData extends StatefulWidget {
 class _CompleteUserDataState extends State<CompleteUserData> {
   String? _picked_image;
   String image = '';
+  TextEditingController phoneController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  TextEditingController buldingController = TextEditingController();
+  TextEditingController buildingController = TextEditingController();
   TextEditingController postalCodeController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController stController = TextEditingController();
-  RoundedLoadingButtonController saveController = RoundedLoadingButtonController();
+  RoundedLoadingButtonController saveController =
+      RoundedLoadingButtonController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  GlobalKey<FormState> _formKey = GlobalKey();
 
   Future getData() async {
     final sp = context.read<SignInProvider>();
     sp.getDataFromSharedPreferences();
     image = sp.imageUrl!;
+    phoneController = TextEditingController(
+        text: (sp.phoneNumber == null ||
+                sp.phoneNumber == 'null' ||
+                sp.phoneNumber == '')
+            ? ''
+            : sp.phoneNumber);
+    nameController = TextEditingController(text: sp.name ?? '');
+    emailController = TextEditingController(text: sp.email ?? '');
+    buildingController = TextEditingController(
+        text: (sp.buildingNumber == null || sp.buildingNumber == 0)
+            ? ''
+            : sp.buildingNumber?.toString());
+    postalCodeController = TextEditingController(
+        text: (sp.postalCode == 'null' ||
+                sp.postalCode == null ||
+                sp.postalCode == '')
+            ? ''
+            : sp.postalCode);
+    cityController = TextEditingController(
+        text: (sp.city == 'null' || sp.city == null || sp.city == '')
+            ? ''
+            : sp.city);
+    stController = TextEditingController(
+        text: (sp.stName == 'null' || sp.stName == null || sp.stName == '')
+            ? ''
+            : sp.stName);
   }
 
   @override
@@ -95,7 +125,8 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                               filterQuality: FilterQuality.high,
                               imageUrl: image,
                               fit: BoxFit.cover,
-                              errorWidget: (context, url, error) => CircleAvatar(
+                              errorWidget: (context, url, error) =>
+                                  CircleAvatar(
                                 child: Icon(CupertinoIcons.person_alt),
                               ),
                             ),
@@ -161,7 +192,8 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                                       color: Colors.white, width: width * .007),
                                   borderRadius: BorderRadius.circular(width)),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(height * .1),
+                                borderRadius:
+                                    BorderRadius.circular(height * .1),
                                 child: Image.file(
                                   File(_picked_image!),
                                   width: height * .15,
@@ -176,7 +208,8 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                                       color: Colors.white, width: width * .007),
                                   borderRadius: BorderRadius.circular(width)),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(height * .1),
+                                borderRadius:
+                                    BorderRadius.circular(height * .1),
                                 child: CachedNetworkImage(
                                   width: height * .15,
                                   height: height * .15,
@@ -217,260 +250,279 @@ class _CompleteUserDataState extends State<CompleteUserData> {
               ),
               Text(
                 sp.name ?? '',
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: width * .05),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: width * .05),
               ),
               SizedBox(
                 height: height * .05,
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: width * .07),
-                child: Column(
-                  children: [
-                    /*if(sp.name == null || sp.name!.trim().isEmpty) */ TextFormField(
-                      controller: nameController,
-                      validator: (text) {
-                        if (text == null || text.trim().isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.account_circle,
-                          color: Color(0xff6850a4),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: nameController,
+                        validator: (text) {
+                          if (text == null || text.trim().isEmpty) {
+                            return 'Please enter your name';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.account_circle,
+                            color: Color(0xff6850a4),
+                          ),
+                          labelStyle: TextStyle(color: Color(0xff6850a4)),
+                          focusColor: Color(0xff6850a4),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff6850a4)),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
+                          labelText: 'Name',
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
                         ),
-                        labelStyle: TextStyle(color: Color(0xff6850a4)),
-                        focusColor: Color(0xff6850a4),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xff6850a4)),
-                            borderRadius: BorderRadius.circular(width * .061)),
-                        labelText: 'Name',
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(),
-                            borderRadius: BorderRadius.circular(width * .061)),
                       ),
-                    ),
-                    /*if(sp.name == null || sp.name!.trim().isEmpty) */ SizedBox(
-                      height: height * .03,
-                    ),
-                    /*if(sp.email == null || sp.email!.trim().isEmpty)*/ TextFormField(
-                      controller: emailController,
-                      validator: (text) {
-                        if (text == null || text.trim().isEmpty) {
-                          return 'Please enter e-mail address';
-                        }
-                        if (!ValidationUtils.isValidEmail(text)) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.email,
-                          color: Color(0xff6850a4),
+                      SizedBox(
+                        height: height * .03,
+                      ),
+                      TextFormField(
+                        controller: emailController,
+                        validator: (text) {
+                          if (text == null || text.trim().isEmpty) {
+                            return 'Please enter e-mail address';
+                          }
+                          if (!ValidationUtils.isValidEmail(text)) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.email,
+                            color: Color(0xff6850a4),
+                          ),
+                          labelStyle: TextStyle(color: Color(0xff6850a4)),
+                          focusColor: Color(0xff6850a4),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff6850a4)),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
+                          labelText: 'Email',
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
                         ),
-                        labelStyle: TextStyle(color: Color(0xff6850a4)),
-                        focusColor: Color(0xff6850a4),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xff6850a4)),
-                            borderRadius: BorderRadius.circular(width * .061)),
-                        labelText: 'Email',
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(),
-                            borderRadius: BorderRadius.circular(width * .061)),
                       ),
-                    ),
-                    /*if(sp.email == null || sp.email!.trim().isEmpty)*/ SizedBox(
-                      height: height * .03,
-                    ),
-                    /*if(sp.phoneNumber == null || sp.phoneNumber!.trim().isEmpty)*/ TextFormField(
-                      controller: phoneController,
-                      validator: (text) {
-                        if (text == null || text.trim().isEmpty) {
-                          return 'Please enter your phone number';
-                        }
-                        if (text.trim().length < 5) {
-                          return 'Please enter a valid phone number';
-                        }
-                        return null;
-                      },
-                      keyboardType: TextInputType.numberWithOptions(),
-                      maxLength: 17,
-                      decoration: InputDecoration(
-                        hintMaxLines: 1,
-                        counterText: "",
-                        prefixIcon: Icon(
-                          CupertinoIcons.phone_fill,
-                          color: basicColor,
+                      SizedBox(
+                        height: height * .03,
+                      ),
+                      TextFormField(
+                        controller: phoneController,
+                        validator: (text) {
+                          if (text == null || text.trim().isEmpty) {
+                            return 'Please enter your phone number';
+                          }
+                          if (text.trim().length < 5) {
+                            return 'Please enter a valid phone number';
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.numberWithOptions(),
+                        maxLength: 17,
+                        decoration: InputDecoration(
+                          hintMaxLines: 1,
+                          counterText: "",
+                          prefixIcon: Icon(
+                            CupertinoIcons.phone_fill,
+                            color: basicColor,
+                          ),
+                          labelStyle: TextStyle(color: basicColor),
+                          focusColor: basicColor,
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: basicColor),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
+                          labelText: 'Phone number',
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
                         ),
-                        labelStyle: TextStyle(color: basicColor),
-                        focusColor: basicColor,
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: basicColor),
-                            borderRadius: BorderRadius.circular(width * .061)),
-                        labelText: 'Phone number',
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(),
-                            borderRadius: BorderRadius.circular(width * .061)),
                       ),
-                    ),
-                    /*if(sp.phoneNumber == null || sp.phoneNumber!.trim().isEmpty)*/ SizedBox(
-                      height: height * .03,
-                    ),
-                    /*if(sp.city == null || sp.city!.trim().isEmpty)*/ TextFormField(
-                      controller: cityController,
-                      validator: (text) {
-                        if (text == null || text.trim().isEmpty) {
-                          return 'Please enter your city';
-                        }
-                        return null;
-                      },
-                      maxLength: 17,
-                      decoration: InputDecoration(
-                        errorMaxLines: 1,
-                        counterText: " ",
-                        prefixIcon: Icon(
-                          Icons.location_city,
-                          color: basicColor,
+                      SizedBox(
+                        height: height * .03,
+                      ),
+                      TextFormField(
+                        controller: cityController,
+                        validator: (text) {
+                          if (text == null || text.trim().isEmpty) {
+                            return 'Please enter your city';
+                          }
+                          return null;
+                        },
+                        maxLength: 17,
+                        decoration: InputDecoration(
+                          errorMaxLines: 1,
+                          counterText: " ",
+                          prefixIcon: Icon(
+                            Icons.location_city,
+                            color: basicColor,
+                          ),
+                          labelStyle: TextStyle(color: basicColor),
+                          focusColor: basicColor,
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xff6850a4)),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
+                          labelText: 'City',
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
                         ),
-                        labelStyle: TextStyle(color: basicColor),
-                        focusColor: basicColor,
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xff6850a4)),
-                            borderRadius: BorderRadius.circular(width * .061)),
-                        labelText: 'City',
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(),
-                            borderRadius: BorderRadius.circular(width * .061)),
                       ),
-                    ),
-                    /*if(sp.city == null || sp.city!.trim().isEmpty)*/ SizedBox(
-                      height: height * .01,
-                    ),
-                    /*if(sp.stName == null || sp.stName!.trim().isEmpty)*/ TextFormField(
-                      controller: stController,
-                      validator: (text) {
-                        if (text == null || text.trim().isEmpty) {
-                          return 'Please enter your street name';
-                        }
-                        return null;
-                      },
-                      maxLength: 37,
-                      decoration: InputDecoration(
-                        errorMaxLines: 2,
-                        counterText: " ",
-                        prefixIcon: Icon(
-                          Icons.add_road,
-                          color: basicColor,
+                      SizedBox(
+                        height: height * .01,
+                      ),
+                      TextFormField(
+                        controller: stController,
+                        validator: (text) {
+                          if (text == null || text.trim().isEmpty) {
+                            return 'Please enter your street name';
+                          }
+                          return null;
+                        },
+                        maxLength: 37,
+                        decoration: InputDecoration(
+                          errorMaxLines: 2,
+                          counterText: " ",
+                          prefixIcon: Icon(
+                            Icons.add_road,
+                            color: basicColor,
+                          ),
+                          labelStyle: TextStyle(color: basicColor),
+                          focusColor: basicColor,
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: basicColor),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
+                          labelText: 'Street name',
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
                         ),
-                        labelStyle: TextStyle(color: basicColor),
-                        focusColor: basicColor,
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: basicColor),
-                            borderRadius: BorderRadius.circular(width * .061)),
-                        labelText: 'Street name',
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(),
-                            borderRadius: BorderRadius.circular(width * .061)),
                       ),
-                    ),
-                    /*if(sp.stName == null || sp.stName!.trim().isEmpty)*/ SizedBox(
-                      height: height * .01,
-                    ),
-                    /*if(sp.buildingNumber == null)*/ TextFormField(
-                      controller: buldingController,
-                      validator: (text) {
-                        if (text == null || text.trim().isEmpty) {
-                          return 'Please enter your building number';
-                        }
-                        return null;
-                      },
-                      keyboardType: TextInputType.number,
-                      maxLength: 5,
-                      decoration: InputDecoration(
-                        hintMaxLines: 1,
-                        counterText: "",
-                        prefixIcon: Icon(
-                          CupertinoIcons.home,
-                          color: basicColor,
+                      SizedBox(
+                        height: height * .01,
+                      ),
+                      TextFormField(
+                        controller: buildingController,
+                        validator: (text) {
+                          if (text == null || text.trim().isEmpty) {
+                            return 'Please enter your building number';
+                          }
+                          return null;
+                        },
+                        keyboardType: TextInputType.number,
+                        maxLength: 5,
+                        decoration: InputDecoration(
+                          hintMaxLines: 1,
+                          counterText: "",
+                          prefixIcon: Icon(
+                            CupertinoIcons.home,
+                            color: basicColor,
+                          ),
+                          labelStyle: TextStyle(color: basicColor),
+                          focusColor: basicColor,
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: basicColor),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
+                          labelText: 'Building number',
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
                         ),
-                        labelStyle: TextStyle(color: basicColor),
-                        focusColor: basicColor,
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: basicColor),
-                            borderRadius: BorderRadius.circular(width * .061)),
-                        labelText: 'Building number',
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(),
-                            borderRadius: BorderRadius.circular(width * .061)),
                       ),
-                    ),
-                    /*if(sp.buildingNumber == null)*/ SizedBox(
-                      height: height * .03,
-                    ),
-                    /*if(sp.postalCode == null || sp.postalCode!.trim().isEmpty)*/ TextFormField(
-                      controller: postalCodeController,
-                      validator: (text) {
-                        if (text == null || text.trim().isEmpty) {
-                          return 'Please enter postal code';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.code,
-                          color: basicColor,
+                      SizedBox(
+                        height: height * .03,
+                      ),
+                      TextFormField(
+                        controller: postalCodeController,
+                        validator: (text) {
+                          if (text == null || text.trim().isEmpty) {
+                            return 'Please enter postal code';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.code,
+                            color: basicColor,
+                          ),
+                          labelStyle: TextStyle(color: basicColor),
+                          focusColor: basicColor,
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: basicColor),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
+                          labelText: 'Postal code',
+                          border: OutlineInputBorder(
+                              borderSide: BorderSide(),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
                         ),
-                        labelStyle: TextStyle(color: basicColor),
-                        focusColor: basicColor,
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: basicColor),
-                            borderRadius: BorderRadius.circular(width * .061)),
-                        labelText: 'Postal code',
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(),
-                            borderRadius: BorderRadius.circular(width * .061)),
                       ),
-                    ),
-                    /*if(sp.postalCode == null || sp.postalCode!.trim().isEmpty)*/ SizedBox(
-                      height: height * .03,
-                    ),
-                    /*if(sp.birthDate == null)*/ GestureDetector(
-                      onTap: () {
-                        showDateDialoge();
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: width * .025),
-                        height: height * .065,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.grey, width: width * .003),
-                            borderRadius: BorderRadius.circular(width * .061)),
-                        child: Center(
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.date_range,
-                                color: basicColor,
-                              ),
-                              SizedBox(
-                                width: width * .025,
-                              ),
-                              Text(
-                                selectedDate == null
-                                    ? 'Birth date'
-                                    : 'Birth date: ${selectedDate?.year}/${selectedDate?.month}/${selectedDate?.day}',
-                                style: TextStyle(
-                                    color: basicColor, fontSize: width * .04),
-                              ),
-                            ],
+                      SizedBox(
+                        height: height * .03,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          showDateDialoge();
+                        },
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: width * .025),
+                          height: height * .065,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.grey, width: width * .003),
+                              borderRadius:
+                                  BorderRadius.circular(width * .061)),
+                          child: Center(
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.date_range,
+                                  color: basicColor,
+                                ),
+                                SizedBox(
+                                  width: width * .025,
+                                ),
+                                Text(
+                                  selectedDate == null
+                                      ? 'Birth date'
+                                      : 'Birth date: ${selectedDate?.year}/${selectedDate?.month}/${selectedDate?.day}',
+                                  style: TextStyle(
+                                      color: basicColor, fontSize: width * .04),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -480,7 +532,33 @@ class _CompleteUserDataState extends State<CompleteUserData> {
       bottomNavigationBar: RoundedLoadingButton(
         controller: saveController,
         color: basicColor,
-        onPressed: () {},
+        onPressed: () {
+          if (sp.imageUrl ==
+              'https://cdn-icons-png.flaticon.com/512/149/149071.png') {
+            openSnackBar(context, 'Please insert your photo', basicColor);
+            saveController.reset();
+            return;
+          }
+          if (selectedDate == null || selectedDate == DateTime.now()) {
+            openSnackBar(context, 'Please complete your data', basicColor);
+            saveController.reset();
+            return;
+          }
+          if (_formKey.currentState!.validate()) {
+            DataBase.updateUserData(
+                DataBase.user.uid, 'name', nameController.text.trim());
+            DataBase.updateUserData(
+                DataBase.user.uid, 'email', emailController.text.trim());
+            DataBase.updateUserData(
+                DataBase.user.uid, 'email', emailController.text.trim());
+            saveController.success();
+            Future.delayed(Duration(seconds: 1));
+            nextScreenReplace(context, HomeScreen());
+          } else {
+            saveController.reset();
+            return;
+          }
+        },
         child: Text('Save'),
       ),
     );

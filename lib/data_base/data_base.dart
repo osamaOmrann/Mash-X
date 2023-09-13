@@ -4,8 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mash/data_base/product.dart';
+import 'package:mash/models/my_user.dart';
 
 class DataBase {
+
+  static FirebaseFirestore firestore = FirebaseFirestore.instance;
+
   static User get user => FirebaseAuth.instance.currentUser!;
 
   static CollectionReference<Product> getProductsCollection() {
@@ -37,5 +41,19 @@ class DataBase {
     });
     String image = await ref.getDownloadURL();
     await FirebaseFirestore.instance.collection('users').doc(user.uid).update({'image_url': image});
+  }
+
+  static CollectionReference<MyUser> getUsersCollection() {
+    return firestore.collection('users').withConverter<MyUser>(
+        fromFirestore: ((snapshot, options) {
+          return MyUser.fromFireStore(snapshot.data()!);
+        }), toFirestore: (user, options) {
+      return user.toFireStore();
+    });
+  }
+
+  static updateUserData(String userId, String field, var value) async {
+    CollectionReference mashXRef = getUsersCollection();
+    mashXRef.doc(userId).update({field: value});
   }
 }

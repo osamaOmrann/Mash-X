@@ -21,14 +21,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Future getData() async {
     final sp = context.read<SignInProvider>();
     sp.getDataFromSharedPreferences();
-    bool completeData = await sp.phoneNumber != null &&
+    bool completeData = await sp.phoneNumber != null && sp.phoneNumber != 'null' && sp.phoneNumber != '' &&
         sp.imageUrl !=
             'https://cdn-icons-png.flaticon.com/512/149/149071.png' &&
         sp.birthDate != null &&
-        sp.city != null &&
-        sp.stName != null &&
-        sp.buildingNumber != null &&
-        sp.postalCode != null;
+        sp.city != null && sp.city != 'null' && sp.city != '' &&
+        sp.stName != null && sp.stName != 'null' && sp.stName != '' &&
+        sp.buildingNumber != null && sp.buildingNumber != 0 &&
+        sp.postalCode != null && sp.postalCode != 'null' && sp.postalCode != '';
     if (completeData == true) {
     } else {
       nextScreenReplace(context, CompleteUserData());

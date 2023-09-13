@@ -122,25 +122,39 @@ class SignInProvider extends ChangeNotifier {
   }
 
   Future getUserDataFromFireStore(uid) async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .get()
-        .then((DocumentSnapshot snapshot) => {
-              _uid = snapshot['uid'],
-              _name = snapshot['name'],
-              _email = snapshot['email'],
-              _imageUrl = snapshot['image_url'],
-              _provider = snapshot['provider'],
-              _password = snapshot['password'],
-              _phoneNumber = snapshot['phone_number'],
-              _birthDate =
-                  DateTime.fromMillisecondsSinceEpoch(snapshot['birth_date']),
-              _city = snapshot['city'],
-              _stName = snapshot['st_name'],
-              _buildingNumber = snapshot['building_number'],
-              _postalCode = snapshot['postal_code'],
-            });
+    try {
+      DocumentSnapshot snapshot =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      if (snapshot.exists) {
+        print(snapshot.data()); // Print snapshot data for debugging
+
+        _uid = snapshot.get('uid') ?? '';
+        _name = snapshot.get('name') ?? '';
+        _email = snapshot.get('email') ?? '';
+        _imageUrl = snapshot.get('image_url') ?? '';
+        _provider = snapshot.get('provider') ?? '';
+        _password =
+            snapshot.get('password') != null ? snapshot.get('password') : '';
+        _phoneNumber = snapshot.get('phone_number') ?? '';
+        _birthDate = snapshot.get('birth_date') != null
+            ? DateTime.fromMillisecondsSinceEpoch(snapshot.get('birth_date'))
+            : null;
+        _city = snapshot.get('city') ?? '';
+        _stName = snapshot.get('st_name') ?? '';
+        _buildingNumber = snapshot.get('building_number') ?? '';
+        _postalCode = snapshot.get('postal_code') ?? '';
+      } else {
+        // Handle the case where the document does not exist
+        // For example, you can throw an exception or show an error message
+        throw Exception('User document does not exist');
+      }
+    } catch (e) {
+      // Handle any errors that occur during the data retrieval
+      print('Error retrieving user data: $e');
+      // You can choose to throw an exception or handle the error in another way
+      throw Exception('Failed to retrieve user data');
+    }
   }
 
   Future saveDataToFireStore() async {
@@ -153,30 +167,31 @@ class SignInProvider extends ChangeNotifier {
       'image_url': _imageUrl,
       'provider': _provider,
       'password': _password,
-      'phone_number': _phoneNumber,
-      'birth_date': _birthDate?.millisecondsSinceEpoch,
-      'city': _city,
-      'st_name': _stName,
-      'building_number': _buildingNumber,
-      'postal_code': _postalCode,
+      'phone_number': _phoneNumber ?? '',
+      'birth_date': _birthDate?.millisecondsSinceEpoch ?? '',
+      'city': _city ?? '',
+      'st_name': _stName ?? '',
+      'building_number': _buildingNumber ?? 0,
+      'postal_code': _postalCode ?? '',
     });
     notifyListeners();
   }
 
   Future saveDataToSharedPreferences() async {
     final SharedPreferences s = await SharedPreferences.getInstance();
-    await s.setString('name', _name!);
-    await s.setString('email', _email!);
-    await s.setString('uid', _uid!);
-    await s.setString('image_url', _imageUrl!);
-    await s.setString('provider', _provider!);
-    await s.setString('password', _password!);
-    await s.setString('phone_number', _phoneNumber!);
-    await s.setString('birth_date', _birthDate!.millisecondsSinceEpoch.toString());
-    await s.setString('city', _city!);
-    await s.setString('st_name', _stName!);
-    await s.setInt('building_number', _buildingNumber!);
-    await s.setString('postal_code', _postalCode!);
+    await s.setString('name', _name ?? '');
+    await s.setString('email', _email ?? '');
+    await s.setString('uid', _uid ?? '');
+    await s.setString('image_url', _imageUrl ?? '');
+    await s.setString('provider', _provider ?? '');
+    await s.setString('password', _password ?? '');
+    await s.setString('phone_number', _phoneNumber ?? '');
+    await s.setString(
+        'birth_date', _birthDate!.millisecondsSinceEpoch.toString() ?? '');
+    await s.setString('city', _city ?? '');
+    await s.setString('st_name', _stName ?? '');
+    await s.setInt('building_number', _buildingNumber ?? 0);
+    await s.setString('postal_code', _postalCode ?? '');
     notifyListeners();
   }
 
@@ -189,7 +204,8 @@ class SignInProvider extends ChangeNotifier {
     _provider = s.getString('provider');
     _password = s.getString('password');
     _phoneNumber = s.getString('phone_number');
-    _birthDate = DateTime.fromMillisecondsSinceEpoch(int.parse(s.getString('birth_date')!));
+    _birthDate = DateTime.fromMillisecondsSinceEpoch(
+        int.parse(s.getString('birth_date')!));
     _city = s.getString('city');
     _stName = s.getString('st_name');
     _buildingNumber = int.parse(s.getString('building_number')!);
