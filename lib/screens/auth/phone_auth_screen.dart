@@ -124,6 +124,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
               ),
               SizedBox(height: height * .03),
               IntlPhoneField(
+                initialCountryCode: 'DE',
                 focusNode: focusNode,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.phone, color: Color(0xff6850a4)),
@@ -183,79 +184,84 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                   barrierDismissible: false,
                   context: context,
                   builder: (context) {
-                    var width = MediaQuery.of(context).size.width,
-                        height = MediaQuery.of(context).size.height;
+                    var width = MediaQuery.of(context).size.width;
                     RoundedLoadingButtonController confirmController = RoundedLoadingButtonController();
-                    return AlertDialog(
-                      title: Text('Enter code'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextField(
-                            controller: otpController,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.code,
-                                color: basicColor,
+                    return WillPopScope(
+                      onWillPop: () async {
+                        submitController.reset();
+                        return true;
+                      },
+                      child: AlertDialog(
+                        title: Text('Enter code'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextField(
+                              controller: otpController,
+                              decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.code,
+                                  color: basicColor,
+                                ),
+                                labelStyle: TextStyle(color: basicColor),
+                                focusColor: basicColor,
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: basicColor),
+                                    borderRadius:
+                                        BorderRadius.circular(width * .061)),
+                                labelText: 'Code',
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(),
+                                    borderRadius:
+                                        BorderRadius.circular(width * .061)),
                               ),
-                              labelStyle: TextStyle(color: basicColor),
-                              focusColor: basicColor,
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: basicColor),
-                                  borderRadius:
-                                      BorderRadius.circular(width * .061)),
-                              labelText: 'Code',
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide(),
-                                  borderRadius:
-                                      BorderRadius.circular(width * .061)),
                             ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          RoundedLoadingButton(
-                            controller: confirmController,
-                              color: basicColor,
-                              onPressed: () async {
-                                final code = otpController.text.trim();
-                                AuthCredential authCredential =
-                                    PhoneAuthProvider.credential(
-                                        verificationId: verificationId,
-                                        smsCode: code);
-                                User user = (await FirebaseAuth.instance
-                                        .signInWithCredential(authCredential))
-                                    .user!;
-                                sp.phoneNumberUser(user, emailController.text,
-                                    nameController.text);
+                            SizedBox(
+                              height: 10,
+                            ),
+                            RoundedLoadingButton(
+                              controller: confirmController,
+                                color: basicColor,
+                                onPressed: () async {
+                                  final code = otpController.text.trim();
+                                  AuthCredential authCredential =
+                                      PhoneAuthProvider.credential(
+                                          verificationId: verificationId,
+                                          smsCode: code);
+                                  User user = (await FirebaseAuth.instance
+                                          .signInWithCredential(authCredential))
+                                      .user!;
+                                  sp.phoneNumberUser(user, emailController.text,
+                                      nameController.text);
 
-                                //Check User Existence
-                                sp.checkUserExists().then((value) async {
-                                  if (value == true) {
-                                    await sp
-                                        .getUserDataFromFireStore(sp.uid)
-                                        .then((value) => sp
-                                            .saveDataToSharedPreferences()
-                                            .then((value) =>
-                                                sp.setSignIn().then((value) {
-                                                  submitController.success();
-                                                  nextScreenReplace(
-                                                      context, HomeScreen());
-                                                })));
-                                  } else {
-                                    sp.saveDataToFireStore().then((value) => sp
-                                        .saveDataToSharedPreferences()
-                                        .then((value) =>
-                                            sp.setSignIn().then((value) {
-                                              submitController.success();
-                                              nextScreenReplace(
-                                                  context, HomeScreen());
-                                            })));
-                                  }
-                                });
-                              },
-                              child: Text('Confirm'))
-                        ],
+                                  //Check User Existence
+                                  sp.checkUserExists().then((value) async {
+                                    if (value == true) {
+                                      await sp
+                                          .getUserDataFromFireStore(sp.uid)
+                                          .then((value) => sp
+                                              .saveDataToSharedPreferences()
+                                              .then((value) =>
+                                                  sp.setSignIn().then((value) {
+                                                    submitController.success();
+                                                    nextScreenReplace(
+                                                        context, HomeScreen());
+                                                  })));
+                                    } else {
+                                      sp.saveDataToFireStore().then((value) => sp
+                                          .saveDataToSharedPreferences()
+                                          .then((value) =>
+                                              sp.setSignIn().then((value) {
+                                                submitController.success();
+                                                nextScreenReplace(
+                                                    context, HomeScreen());
+                                              })));
+                                    }
+                                  });
+                                },
+                                child: Text('Confirm'))
+                          ],
+                        ),
                       ),
                     );
                   });
