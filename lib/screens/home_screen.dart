@@ -29,7 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
         .doc(DataBase.user.uid)
         .get();
     var data = documentSnapshot.data();
-    bool completeData = data!['phone_number'] != null &&
+    userImage = await data!['image_url'];
+    bool completeData = data['phone_number'] != null &&
         data['phone_number'] != 'null' &&
         data['phone_number'] != '' &&
         data['image_url'] !=
@@ -46,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
         data['postal_code'] != null &&
         data['postal_code'] != 'null' &&
         data['postal_code'] != '';
-    userImage = data['image_url'];
     if(completeData == false) nextScreenReplace(context, CompleteUserData());
   }
 
@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           showModalBottomSheet(
                               isScrollControlled: true,
                               context: context,
-                              builder: (_) => HomeBottomSheet());
+                              builder: (_) => HomeBottomSheet(userImage));
                         },
                         icon: Icon(
                           Icons.menu,

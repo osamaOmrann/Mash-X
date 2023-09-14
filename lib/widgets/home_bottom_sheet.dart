@@ -9,7 +9,8 @@ import 'package:mash/widgets/job_offer_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomeBottomSheet extends StatelessWidget {
-  const HomeBottomSheet({super.key});
+  String userImage;
+  HomeBottomSheet(this.userImage);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,8 @@ class HomeBottomSheet extends StatelessWidget {
               GestureDetector(
                 onTap: () {nextScreen(context, ProfileScreen());},
                 child: CircleAvatar(
-                  backgroundImage: NetworkImage(sp.imageUrl ?? ''),
+                  backgroundColor: Colors.transparent,
+                  backgroundImage: NetworkImage(userImage),
                   radius: width * .061,
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,7 +23,14 @@ class CompleteUserData extends StatefulWidget {
 
 class _CompleteUserDataState extends State<CompleteUserData> {
   String? _picked_image;
-  String image = '';
+  String image = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  String name = '';
+  String phone = '';
+  String email = '';
+  int building = 0;
+  String city = '';
+  String postal_code = '';
+  String st_name = '';
   TextEditingController phoneController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -36,35 +44,49 @@ class _CompleteUserDataState extends State<CompleteUserData> {
   GlobalKey<FormState> _formKey = GlobalKey();
 
   Future getData() async {
+    var documentSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(DataBase.user.uid)
+        .get();
+    var data = documentSnapshot.data();
+    setState(() {
+      image = data!['image_url'];
+    });
+    name = data!['name'];
+    phone = data['phone_number'];
+    email = data['email'];
+    building = data['building_number'];
+    postal_code = data['postal_code'];
+    city = data['city'];
+    st_name = data['st_name'];
     final sp = context.read<SignInProvider>();
     sp.getDataFromSharedPreferences();
-    image = sp.imageUrl!;
     phoneController = TextEditingController(
-        text: (sp.phoneNumber == null ||
-                sp.phoneNumber == 'null' ||
-                sp.phoneNumber == '')
+        text: (phone == null ||
+            phone == 'null' ||
+            phone == '')
             ? ''
-            : sp.phoneNumber);
-    nameController = TextEditingController(text: sp.name ?? '');
-    emailController = TextEditingController(text: sp.email ?? '');
+            : phone);
+    nameController = TextEditingController(text: name ?? '');
+    emailController = TextEditingController(text: email ?? '');
     buildingController = TextEditingController(
-        text: (sp.buildingNumber == null || sp.buildingNumber == 0)
+        text: (building == null || building == 0)
             ? ''
-            : sp.buildingNumber?.toString());
+            : building.toString());
     postalCodeController = TextEditingController(
-        text: (sp.postalCode == 'null' ||
-                sp.postalCode == null ||
-                sp.postalCode == '')
+        text: (postal_code == 'null' ||
+            postal_code == null ||
+            postal_code == '')
             ? ''
-            : sp.postalCode);
+            : postal_code);
     cityController = TextEditingController(
-        text: (sp.city == 'null' || sp.city == null || sp.city == '')
+        text: (city == 'null' || city == null || city == '')
             ? ''
-            : sp.city);
+            : city);
     stController = TextEditingController(
-        text: (sp.stName == 'null' || sp.stName == null || sp.stName == '')
+        text: (st_name == 'null' || st_name == null || st_name == '')
             ? ''
-            : sp.stName);
+            : st_name);
   }
 
   @override
@@ -541,13 +563,14 @@ class _CompleteUserDataState extends State<CompleteUserData> {
       bottomNavigationBar: RoundedLoadingButton(
         controller: saveController,
         color: basicColor,
+        successColor: basicColor,
         onPressed: () {
-          if (sp.imageUrl ==
+          /*if (image ==
               'https://cdn-icons-png.flaticon.com/512/149/149071.png') {
             openSnackBar(context, 'Please insert your photo', basicColor);
             saveController.reset();
             return;
-          }
+          }*/
           if (selectedDate == null || selectedDate == DateTime.now()) {
             openSnackBar(context, 'Please complete your data', basicColor);
             saveController.reset();
@@ -572,8 +595,9 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                 DataBase.user.uid, 'birth_date', selectedDate?.millisecondsSinceEpoch);
             sp.saveDataToSharedPreferences();
             saveController.success();
-            Future.delayed(const Duration(seconds: 2));
-            nextScreenReplace(context, HomeScreen());
+            Future.delayed(Duration(milliseconds: 1000)).then((value) {
+              nextScreenReplace(context, HomeScreen());
+            });
           } else {
             saveController.reset();
             return;

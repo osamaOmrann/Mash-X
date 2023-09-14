@@ -21,6 +21,7 @@ class JobCard extends StatelessWidget {
           child: ListTile(
             dense: false,
             leading: CircleAvatar(
+              backgroundColor: Colors.transparent,
               backgroundImage: NetworkImage(image),
               radius: width * .07,
             ),
