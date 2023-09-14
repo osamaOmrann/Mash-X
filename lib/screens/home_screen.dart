@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mash/data_base/data_base.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
 import 'package:mash/helpers/next_screen.dart';
 import 'package:mash/main.dart';
@@ -18,27 +20,40 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Future getData() async {
-    final sp = context.read<SignInProvider>();
-    sp.getDataFromSharedPreferences();
-    bool completeData = await sp.phoneNumber != null && sp.phoneNumber != 'null' && sp.phoneNumber != '' &&
-        sp.imageUrl !=
+
+  String userImage = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+  Future<void> _getValues() async {
+    var documentSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(DataBase.user.uid)
+        .get();
+    var data = documentSnapshot.data();
+    bool completeData = data!['phone_number'] != null &&
+        data['phone_number'] != 'null' &&
+        data['phone_number'] != '' &&
+        data['image_url'] !=
             'https://cdn-icons-png.flaticon.com/512/149/149071.png' &&
-        sp.birthDate != null &&
-        sp.city != null && sp.city != 'null' && sp.city != '' &&
-        sp.stName != null && sp.stName != 'null' && sp.stName != '' &&
-        sp.buildingNumber != null && sp.buildingNumber != 0 &&
-        sp.postalCode != null && sp.postalCode != 'null' && sp.postalCode != '';
-    if (completeData == true) {
-    } else {
-      nextScreenReplace(context, CompleteUserData());
-    }
+        data['birth_date'] != null &&
+        data['city'] != null &&
+        data['city'] != 'null' &&
+        data['city'] != '' &&
+        data['st_name'] != null &&
+        data['st_name'] != 'null' &&
+        data['st_name'] != '' &&
+        data['building_number'] != null &&
+        data['building_number'] != 0 &&
+        data['postal_code'] != null &&
+        data['postal_code'] != 'null' &&
+        data['postal_code'] != '';
+    userImage = data['image_url'];
+    if(completeData == false) nextScreenReplace(context, CompleteUserData());
   }
 
   @override
   void initState() {
     super.initState();
-    getData();
+    _getValues();
   }
 
   @override
@@ -211,8 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     physics: BouncingScrollPhysics(),
                     itemCount: 21,
                     itemBuilder: (context, index) {
-                      return JobCard(sp.imageUrl ??
-                          'https://cdn-icons-png.flaticon.com/512/149/149071.png');
+                      return JobCard(userImage);
                     }))
           ],
         ),

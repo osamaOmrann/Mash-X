@@ -1,7 +1,8 @@
 class MyUser {
   static const String collectionName = 'users';
   String? uid, name, email, image_url, password, city, st_name, postal_code;
-  int? phone_number, birth_date, building_number;
+  int? phone_number, building_number;
+  DateTime? birth_date;
 
   MyUser(
       {this.uid,
@@ -24,7 +25,7 @@ class MyUser {
             image_url: data['image_url'],
             password: data['password'],
             phone_number: data['phone_number'],
-            birth_date: data['birth_date'],
+            birth_date: DateTime.fromMillisecondsSinceEpoch(data['birth_date']),
             city: data['city'],
             st_name: data['st_name'],
             building_number: data['building_number'],
@@ -38,7 +39,7 @@ class MyUser {
       'image_url': image_url,
       'password': password,
       'phone_number': phone_number,
-      'birth_date': birth_date,
+      'birth_date': birth_date?.millisecondsSinceEpoch,
       'city': city,
       'st_name': st_name,
       'building_number': building_number,

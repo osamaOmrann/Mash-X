@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -135,14 +134,14 @@ class SignInProvider extends ChangeNotifier {
         _imageUrl = snapshot.get('image_url') ?? '';
         _provider = snapshot.get('provider') ?? '';
         _password =
-            snapshot.get('password') != null ? snapshot.get('password') : '';
+            snapshot.get('password') ?? '';
         _phoneNumber = snapshot.get('phone_number') ?? '';
         _birthDate = snapshot.get('birth_date') != null
             ? DateTime.fromMillisecondsSinceEpoch(snapshot.get('birth_date'))
             : null;
         _city = snapshot.get('city') ?? '';
         _stName = snapshot.get('st_name') ?? '';
-        _buildingNumber = snapshot.get('building_number') ?? '';
+        _buildingNumber = snapshot.get('building_number') ?? 0;
         _postalCode = snapshot.get('postal_code') ?? '';
       } else {
         // Handle the case where the document does not exist
@@ -151,7 +150,7 @@ class SignInProvider extends ChangeNotifier {
       }
     } catch (e) {
       // Handle any errors that occur during the data retrieval
-      print('Error retrieving user data: $e');
+      log('Error retrieving user data: $e');
       // You can choose to throw an exception or handle the error in another way
       throw Exception('Failed to retrieve user data');
     }
@@ -186,14 +185,15 @@ class SignInProvider extends ChangeNotifier {
     await s.setString('provider', _provider ?? '');
     await s.setString('password', _password ?? '');
     await s.setString('phone_number', _phoneNumber ?? '');
-    await s.setString(
-        'birth_date', _birthDate!.millisecondsSinceEpoch.toString() ?? '');
+    await s.setInt(
+        'birth_date', _birthDate?.millisecondsSinceEpoch ?? 0);
     await s.setString('city', _city ?? '');
     await s.setString('st_name', _stName ?? '');
     await s.setInt('building_number', _buildingNumber ?? 0);
     await s.setString('postal_code', _postalCode ?? '');
     notifyListeners();
   }
+
 
   Future getDataFromSharedPreferences() async {
     final SharedPreferences s = await SharedPreferences.getInstance();
@@ -204,11 +204,10 @@ class SignInProvider extends ChangeNotifier {
     _provider = s.getString('provider');
     _password = s.getString('password');
     _phoneNumber = s.getString('phone_number');
-    _birthDate = DateTime.fromMillisecondsSinceEpoch(
-        int.parse(s.getString('birth_date')!));
+    _birthDate = DateTime.fromMillisecondsSinceEpoch(s.getInt('birth_date') ?? 0);
     _city = s.getString('city');
     _stName = s.getString('st_name');
-    _buildingNumber = int.parse(s.getString('building_number')!);
+    _buildingNumber = s.getInt('building_number');
     _postalCode = s.getString('postal_code');
     notifyListeners();
   }

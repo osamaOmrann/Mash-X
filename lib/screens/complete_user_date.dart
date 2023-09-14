@@ -175,7 +175,7 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                   ),
                   Positioned(
                       top: height * .22001,
-                      left: width * .321,
+                      left: width * .33,
                       child: _picked_image != null
                           ? Container(
                               decoration: BoxDecoration(
@@ -204,6 +204,15 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                             )
                           : Container(
                               decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey,
+                                      spreadRadius: 5,
+                                      blurRadius: 7,
+                                      offset: Offset(
+                                          0, 3), // changes position of shadow
+                                    ),
+                                  ],
                                   border: Border.all(
                                       color: Colors.white, width: width * .007),
                                   borderRadius: BorderRadius.circular(width)),
@@ -334,7 +343,7 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.numberWithOptions(),
+                        keyboardType: TextInputType.phone,
                         maxLength: 17,
                         decoration: InputDecoration(
                           hintMaxLines: 1,
@@ -550,9 +559,20 @@ class _CompleteUserDataState extends State<CompleteUserData> {
             DataBase.updateUserData(
                 DataBase.user.uid, 'email', emailController.text.trim());
             DataBase.updateUserData(
-                DataBase.user.uid, 'email', emailController.text.trim());
+                DataBase.user.uid, 'phone_number', phoneController.text.trim());
+            DataBase.updateUserData(
+                DataBase.user.uid, 'city', cityController.text.trim());
+            DataBase.updateUserData(
+                DataBase.user.uid, 'st_name', stController.text.trim());
+            DataBase.updateUserData(
+                DataBase.user.uid, 'building_number', int.parse(buildingController.text.trim()));
+            DataBase.updateUserData(
+                DataBase.user.uid, 'postal_code', postalCodeController.text.trim());
+            DataBase.updateUserData(
+                DataBase.user.uid, 'birth_date', selectedDate?.millisecondsSinceEpoch);
+            sp.saveDataToSharedPreferences();
             saveController.success();
-            Future.delayed(Duration(seconds: 1));
+            Future.delayed(const Duration(seconds: 2));
             nextScreenReplace(context, HomeScreen());
           } else {
             saveController.reset();
