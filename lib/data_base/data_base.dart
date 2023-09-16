@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mash/data_base/product.dart';
 import 'package:mash/models/my_user.dart';
+import 'package:mash/models/rate.dart';
 
 class DataBase {
 
@@ -55,5 +56,23 @@ class DataBase {
   static updateUserData(String userId, String field, var value) async {
     CollectionReference mashXRef = getUsersCollection();
     mashXRef.doc(userId).update({field: value});
+  }
+
+  static CollectionReference<Rate> getRatesCollection() {
+    return FirebaseFirestore.instance
+        .collection(Rate.collectionName)
+        .withConverter<Rate>(fromFirestore: (snapshot, options) {
+      return Rate.fromFireStore(snapshot.data()!);
+    }, toFirestore: (rate, options) {
+      return rate.toFireStore();
+    });
+  }
+
+  static Stream<QuerySnapshot<Rate>>
+  listenForRatesRealTimeUpdates(ratesIds) {
+    // Listen for realtime update
+    return getRatesCollection().where("id",
+        whereIn: ratesIds)
+        .snapshots();
   }
 }

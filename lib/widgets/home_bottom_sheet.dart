@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mash/data_base/data_base.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
 import 'package:mash/helpers/next_screen.dart';
+import 'package:mash/screens/profile_screen.dart';
 import 'package:mash/screens/profile_screen.dart';
 import 'package:mash/screens/settings.dart';
 import 'package:mash/screens/store_screen.dart';
@@ -31,7 +33,7 @@ class HomeBottomSheet extends StatelessWidget {
             children: [
               SizedBox(width: width * .03,),
               GestureDetector(
-                onTap: () {nextScreen(context, ProfileScreen());},
+                onTap: () {nextScreen(context, UserProfilePage(DataBase.user.uid));},
                 child: CircleAvatar(
                   backgroundColor: Colors.transparent,
                   backgroundImage: NetworkImage(userImage),

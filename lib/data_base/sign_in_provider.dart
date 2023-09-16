@@ -54,6 +54,9 @@ class SignInProvider extends ChangeNotifier {
   String? _postalCode;
   String? get postalCode => _postalCode;
 
+  List? _rates;
+  List? get rates => _rates;
+
   SignInProvider() {
     checkSignInUser();
   }
@@ -143,6 +146,7 @@ class SignInProvider extends ChangeNotifier {
         _stName = snapshot.get('st_name') ?? '';
         _buildingNumber = snapshot.get('building_number') ?? 0;
         _postalCode = snapshot.get('postal_code') ?? '';
+        _rates = snapshot.get('rates') ?? [];
       } else {
         // Handle the case where the document does not exist
         // For example, you can throw an exception or show an error message
@@ -172,6 +176,7 @@ class SignInProvider extends ChangeNotifier {
       'st_name': _stName ?? '',
       'building_number': _buildingNumber ?? 0,
       'postal_code': _postalCode ?? '',
+      'rates': _rates?? []
     });
     notifyListeners();
   }
@@ -191,6 +196,7 @@ class SignInProvider extends ChangeNotifier {
     await s.setString('st_name', _stName ?? '');
     await s.setInt('building_number', _buildingNumber ?? 0);
     await s.setString('postal_code', _postalCode ?? '');
+    // await s.setStringList('rates', _rates as List<String>);
     notifyListeners();
   }
 
@@ -209,6 +215,7 @@ class SignInProvider extends ChangeNotifier {
     _stName = s.getString('st_name');
     _buildingNumber = s.getInt('building_number');
     _postalCode = s.getString('postal_code');
+    _rates = s.getStringList('rates');
     notifyListeners();
   }
 
@@ -259,5 +266,28 @@ class SignInProvider extends ChangeNotifier {
     _password = password;
     _provider = 'EMAIL AND PASSWORD';
     notifyListeners();
+  }
+}
+
+class SharedHelper {
+  static SharedPreferences? sP;
+  static init() async {
+    sP = await SharedPreferences.getInstance();
+  }
+
+  static Future<bool> saveData(
+      {required String key, required dynamic value}) async {
+    if (value is String) return await sP!.setString(key, value);
+    if (value is int) return await sP!.setInt(key, value);
+    if (value is bool) return await sP!.setBool(key, value);
+    return await sP!.setDouble(key, value);
+  }
+
+  static dynamic getData({required String key}) {
+    return sP?.get(key);
+  }
+
+  static Future<bool> deleteData({required String key}) async {
+    return await sP!.remove(key);
   }
 }

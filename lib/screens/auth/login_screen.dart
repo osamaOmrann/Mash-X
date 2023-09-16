@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -40,6 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Form(
         key: formKey,
         child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: width * .07),
             child: Column(
@@ -211,12 +214,17 @@ class _LoginScreenState extends State<LoginScreen> {
           //Checking User Existence
           sp.checkUserExists().then((value) async {
             if (value == true) {
-              await sp.getUserDataFromFireStore(sp.uid).then((value) => sp
-                  .saveDataToSharedPreferences()
-                  .then((value) => sp.setSignIn().then((value) {
-                        googleController.success();
-                        handleAfterSigningIn();
-                      })));
+              try{
+                await sp.getUserDataFromFireStore(sp.uid).then((value) => sp
+                    .saveDataToSharedPreferences()
+                    .then((value) => sp.setSignIn().then((value) {
+                  googleController.success();
+                  handleAfterSigningIn();
+                })));
+              } catch (e) {
+                // Handle the error, e.g., show an error message to the user
+                log('Failed to retrieve user data: $e');
+              }
             } else {
               sp.saveDataToFireStore().then((value) => sp
                   .saveDataToSharedPreferences()

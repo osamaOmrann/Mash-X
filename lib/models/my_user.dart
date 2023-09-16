@@ -3,6 +3,7 @@ class MyUser {
   String? uid, name, email, image_url, password, city, st_name, postal_code;
   int? phone_number, building_number;
   DateTime? birth_date;
+  List? rates;
 
   MyUser(
       {this.uid,
@@ -15,7 +16,7 @@ class MyUser {
       this.city,
       this.st_name,
       this.building_number,
-      this.postal_code});
+      this.postal_code, this.rates});
 
   MyUser.fromFireStore(Map<String, dynamic> data)
       : this(
@@ -29,7 +30,8 @@ class MyUser {
             city: data['city'],
             st_name: data['st_name'],
             building_number: data['building_number'],
-            postal_code: data['postal_code']);
+            postal_code: data['postal_code'],
+  rates: data['rates']);
 
   Map<String, dynamic> toFireStore() {
     return {
@@ -43,7 +45,8 @@ class MyUser {
       'city': city,
       'st_name': st_name,
       'building_number': building_number,
-      'postal_code': postal_code
+      'postal_code': postal_code,
+      'rates': rates
     };
   }
 }
