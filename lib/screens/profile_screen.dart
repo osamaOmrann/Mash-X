@@ -19,7 +19,6 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePageState extends State<UserProfilePage> {
-
   String? _picked_image;
 
   @override
@@ -42,273 +41,386 @@ class _UserProfilePageState extends State<UserProfilePage> {
           }
 
           var userData = snapshot.data!.data() as Map<String, dynamic>;
-              if (snapshot.hasError) {
-                return Text('error loading data try again later');
-              }
+          String age = '';
 
-              if (!snapshot.hasData) {
-                return CircularProgressIndicator();
-              }
-              String age = '';
-
-              void computeAge() {
-                age = (DateTime.now().year -
+          void computeAge() {
+            age = (DateTime.now().year -
+                    DateTime.fromMillisecondsSinceEpoch(userData['birth_date'])
+                        .year)
+                .toString();
+            if (DateTime.now().month <
+                    DateTime.fromMillisecondsSinceEpoch(userData['birth_date'])
+                        .month ||
+                (DateTime.now().month ==
                         DateTime.fromMillisecondsSinceEpoch(
                                 userData['birth_date'])
-                            .year)
-                    .toString();
-                if (DateTime.now().month <
+                            .month &&
+                    DateTime.now().day <
                         DateTime.fromMillisecondsSinceEpoch(
                                 userData['birth_date'])
-                            .month ||
-                    (DateTime.now().month ==
-                            DateTime.fromMillisecondsSinceEpoch(
-                                    userData['birth_date'])
-                                .month &&
-                        DateTime.now().day <
-                            DateTime.fromMillisecondsSinceEpoch(
-                                    userData['birth_date'])
-                                .day)) {
-                  age = (int.parse(age) - 1).toString();
-                }
-              }
+                            .day)) {
+              age = (int.parse(age) - 1).toString();
+            }
+          }
 
-              computeAge();
+          computeAge();
 
-              return Stack(
+          return Stack(
+            children: [
+              ListView(
+                physics: BouncingScrollPhysics(),
                 children: [
-                  SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Stack(
+                  Stack(
+                    children: [
+                      Column(
+                        children: [
+                          CachedNetworkImage(
+                              height: height * .45,
+                              width: width,
+                              fit: BoxFit.cover,
+                              imageUrl: userData['image_url']),
+                          SizedBox(
+                            height: height * .05,
+                          ),
+                        ],
+                      ),
+                      Positioned(
+                          right: width * .05,
+                          top: height * .419,
+                          child: FloatingActionButton(
+                            backgroundColor: basicColor,
+                            onPressed: () {
+                              _showBottomSheet(context);
+                            },
+                            child: Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                            ),
+                          ))
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: width * .065),
+                    child: Column(
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                        Row(
                           children: [
-                            CachedNetworkImage(
-                                height: height * .45,
-                                width: width,
-                                fit: BoxFit.cover,
-                                imageUrl: userData['image_url']),
-                            SizedBox(
-                              height: height * .05,
+                            Text(
+                              '${userData['name']}, $age',
+                              style: TextStyle(fontSize: width * .061),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: width * .065),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        '${userData['name']}, $age',
-                                        style: TextStyle(fontSize: width * .061),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        userData['city'],
-                                        style: TextStyle(
-                                            color: basicColor,
-                                            fontSize: width * .039),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: height * .05,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: width * .85,
-                                        padding: EdgeInsets.symmetric(vertical: 5),
-                                          color: Colors.grey,
-                                          child: Text('rates: ${userData['rates']}', overflow: TextOverflow.ellipsis)),
-                                    ],
-                                  ),
-                                  StreamBuilder<QuerySnapshot<Rate>>(
-                                    builder: (buildContext, snapshot) {
-                                      if (snapshot.hasError) {
-                                        return Center(
-                                          child: Text(
-                                              'Error loading date try again later'),
-                                        );
-                                      } else if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                              color: basicColor),
-                                        );
-                                      }
-                                      var data = snapshot.data?.docs
-                                          .map((e) => e.data())
-                                          .toList();
-                                      return ListView.builder(
-                                        physics: BouncingScrollPhysics(),
-                                        itemBuilder: (buildContext, index) {
-                                          return data.isEmpty
-                                              ? Center(
-                                                  child: Text(
-                                                    'No rates yet',
-                                                    style: TextStyle(
-                                                        color: basicColor,
-                                                        fontSize: 30),
-                                                  ),
-                                                )
-                                              : Center(
-                                                  child: Text(
-                                                  data[index].comment ?? 'null',
-                                                  style: TextStyle(
-                                                      fontSize: 100,
-                                                      color: Colors.black),
-                                                ));
-                                        },
-                                        itemCount: data!.length,
-                                      );
-                                    },
-                                    // future: MyDataBase.getAllMissingPersons(),
-                                    stream: DataBase.listenForRatesRealTimeUpdates(
-                                        userData['rates']),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: width * .065),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text('Email', style: TextStyle(color: basicColor),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Row(
-                                    children: [
-                                      Text(userData['email'], style: TextStyle(fontWeight: FontWeight.bold),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Container(width: double.infinity, height: height * .0005, color: Colors.grey,),
-                                  SizedBox(height: height * .021,),
-                                  Row(
-                                    children: [
-                                      Text('Birth date', style: TextStyle(color: basicColor),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Row(
-                                    children: [
-                                      Text(
-                                    '${DateTime.fromMillisecondsSinceEpoch(userData['birth_date']).day}/${DateTime.fromMillisecondsSinceEpoch(userData['birth_date']).month}/${DateTime.fromMillisecondsSinceEpoch(userData['birth_date']).year}', style: TextStyle(fontWeight: FontWeight.bold),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Container(width: double.infinity, height: height * .0005, color: Colors.grey,),
-                                  SizedBox(height: height * .021,),
-                                  Row(
-                                    children: [
-                                      Text('Phone number', style: TextStyle(color: basicColor),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Row(
-                                    children: [
-                                      Text(userData['phone_number'], style: TextStyle(fontWeight: FontWeight.bold),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Container(width: double.infinity, height: height * .0005, color: Colors.grey,),
-                                  SizedBox(height: height * .021,),
-                                  Row(
-                                    children: [
-                                      Text('City', style: TextStyle(color: basicColor),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Row(
-                                    children: [
-                                      Text(userData['city'], style: TextStyle(fontWeight: FontWeight.bold),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Container(width: double.infinity, height: height * .0005, color: Colors.grey,),
-                                  SizedBox(height: height * .021,),
-                                  Row(
-                                    children: [
-                                      Text('Street name', style: TextStyle(color: basicColor),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Row(
-                                    children: [
-                                      Text(userData['st_name'], style: TextStyle(fontWeight: FontWeight.bold),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Container(width: double.infinity, height: height * .0005, color: Colors.grey,),
-                                  SizedBox(height: height * .021,),
-                                  Row(
-                                    children: [
-                                      Text('Building number', style: TextStyle(color: basicColor),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Row(
-                                    children: [
-                                      Text(userData['building_number'].toString(), style: TextStyle(fontWeight: FontWeight.bold),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Container(width: double.infinity, height: height * .0005, color: Colors.grey,),
-                                  SizedBox(height: height * .021,),
-                                  Row(
-                                    children: [
-                                      Text('Postal code', style: TextStyle(color: basicColor),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Row(
-                                    children: [
-                                      Text(userData['postal_code'], style: TextStyle(fontWeight: FontWeight.bold),),
-                                    ],
-                                  ),
-                                  SizedBox(height: height * .01,),
-                                  Container(width: double.infinity, height: height * .0005, color: Colors.grey,),
-                                ],
-                              ),
-                            )
                           ],
                         ),
-                        Positioned(
-                            right: width * .05,
-                            top: height * .419,
-                            child: FloatingActionButton(
-                              backgroundColor: basicColor,
-                              onPressed: () {_showBottomSheet(context);},
-                              child: Icon(
-                                Icons.edit,
-                                color: Colors.white,
+                        Row(
+                          children: [
+                            Text(
+                              userData['city'],
+                              style: TextStyle(
+                                  color: basicColor,
+                                  fontSize: width * .039),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .05,
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                                padding: EdgeInsets.symmetric(vertical: 5),
+                                color: Colors.grey,
+                                child: Text('Rates: ')),
+                          ],
+                        ),
+                        StreamBuilder<QuerySnapshot<Rate>>(
+                          builder: (buildContext, snapshot) {
+                            if (snapshot.hasError) {
+                              return Center(
+                                child: Text(
+                                    'Error loading date try again later'),
+                              );
+                            } else if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                    color: basicColor),
+                              );
+                            }
+                            var data = snapshot.data?.docs
+                                .map((e) => e.data())
+                                .toList();
+                            return SizedBox(
+                              height: height * data!.length / 40,
+                              child: ListView.builder(
+                                physics: BouncingScrollPhysics(),
+                                itemBuilder: (buildContext, index) {
+                                  return data.isEmpty
+                                      ? Center(
+                                          child: Text(
+                                            'No rates yet',
+                                            style: TextStyle(
+                                                color: basicColor,
+                                                fontSize: 30),
+                                          ),
+                                        )
+                                      : Row(
+                                    children: [
+                                      Text(
+                                        '${data[index].companyName}:' ?? '',
+                                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(' ${data[index].comment}')
+                                    ],
+                                  );
+                                },
+                                itemCount: data.length,
                               ),
-                            ))
+                            );
+                          },
+                          stream: DataBase.listenForRatesRealTimeUpdates(
+                              userData['rates']),
+                        ),
                       ],
                     ),
                   ),
-                  Positioned(
-                    top: height * .05,
-                    left: width * .05,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(
-                        CupertinoIcons.arrow_left,
-                        color: basicColor,
-                        shadows: [Shadow(color: Colors.white, blurRadius: 3)],
-                        size: width * .07,
-                      ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: width * .065),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Email',
+                              style: TextStyle(color: basicColor),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              userData['email'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: height * .0005,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          height: height * .021,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Birth date',
+                              style: TextStyle(color: basicColor),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              '${DateTime.fromMillisecondsSinceEpoch(userData['birth_date']).day}/${DateTime.fromMillisecondsSinceEpoch(userData['birth_date']).month}/${DateTime.fromMillisecondsSinceEpoch(userData['birth_date']).year}',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: height * .0005,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          height: height * .021,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Phone number',
+                              style: TextStyle(color: basicColor),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              userData['phone_number'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: height * .0005,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          height: height * .021,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'City',
+                              style: TextStyle(color: basicColor),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              userData['city'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: height * .0005,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          height: height * .021,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Street name',
+                              style: TextStyle(color: basicColor),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              userData['st_name'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: height * .0005,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          height: height * .021,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Building number',
+                              style: TextStyle(color: basicColor),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              userData['building_number'].toString(),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: height * .0005,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          height: height * .021,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Postal code',
+                              style: TextStyle(color: basicColor),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              userData['postal_code'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .01,
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: height * .0005,
+                          color: Colors.grey,
+                        ),
+                      ],
                     ),
-                  ),
+                  )
                 ],
-              );
+              ),
+              Positioned(
+                top: height * .05,
+                left: width * .05,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Icon(
+                    CupertinoIcons.arrow_left,
+                    color: basicColor,
+                    shadows: [Shadow(color: Colors.white, blurRadius: 3)],
+                    size: width * .07,
+                  ),
+                ),
+              ),
+            ],
+          );
         },
       ),
     );

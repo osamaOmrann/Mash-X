@@ -8,7 +8,6 @@ import 'package:mash/models/my_user.dart';
 import 'package:mash/models/rate.dart';
 
 class DataBase {
-
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   static User get user => FirebaseAuth.instance.currentUser!;
@@ -23,8 +22,7 @@ class DataBase {
     });
   }
 
-  static Stream<QuerySnapshot<Product>>
-  listenForProductsRealTimeUpdates() {
+  static Stream<QuerySnapshot<Product>> listenForProductsRealTimeUpdates() {
     // Listen for realtime update
     return getProductsCollection()
         .orderBy("date", descending: true)
@@ -34,21 +32,26 @@ class DataBase {
   static Future<void> updateProfilePicture(File file) async {
     final ext = file.path.split('.').last;
     log('Extensions: $ext');
-    final ref = FirebaseStorage.instance.ref().child('profile_pictures/${user.uid}.$ext');
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('profile_pictures/${user.uid}.$ext');
     await ref
         .putFile(file, SettableMetadata(contentType: 'image/$ext'))
         .then((p0) {
       log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
     });
     String image = await ref.getDownloadURL();
-    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({'image_url': image});
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .update({'image_url': image});
   }
 
   static CollectionReference<MyUser> getUsersCollection() {
     return firestore.collection('users').withConverter<MyUser>(
         fromFirestore: ((snapshot, options) {
-          return MyUser.fromFireStore(snapshot.data()!);
-        }), toFirestore: (user, options) {
+      return MyUser.fromFireStore(snapshot.data()!);
+    }), toFirestore: (user, options) {
       return user.toFireStore();
     });
   }
@@ -64,15 +67,13 @@ class DataBase {
         .withConverter<Rate>(fromFirestore: (snapshot, options) {
       return Rate.fromFireStore(snapshot.data()!);
     }, toFirestore: (rate, options) {
+          log(rate.toString());
       return rate.toFireStore();
     });
   }
 
-  static Stream<QuerySnapshot<Rate>>
-  listenForRatesRealTimeUpdates(ratesIds) {
+  static Stream<QuerySnapshot<Rate>> listenForRatesRealTimeUpdates(ratesIds) {
     // Listen for realtime update
-    return getRatesCollection().where("id",
-        whereIn: ratesIds)
-        .snapshots();
+    return getRatesCollection()/*.where("id", whereIn: ratesIds)*/.snapshots();
   }
 }

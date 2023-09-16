@@ -62,16 +62,16 @@ class _HomeScreenState extends State<HomeScreen> {
         height = MediaQuery.of(context).size.height;
     final sp = context.watch<SignInProvider>();
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size(0, height * .25),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: width * .03),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: double.infinity,
               height: height * .11,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: width * .05),
+                padding: EdgeInsets.symmetric(horizontal: width * .02),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: height * .03,
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: width * .05),
+              padding: EdgeInsets.symmetric(horizontal: width * .02),
               child: Column(
                 children: [
                   TextField(
@@ -176,74 +176,59 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: height * .025,
             ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: width * .03),
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: height * .19,
+            SizedBox(
+              height: height * .19,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: BouncingScrollPhysics(),
+                  itemCount: 21,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.only(right: width * .03),
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(width * .05),
+                          child: Image.asset('assets/images/company.jpg',
+                              width: width * .41, fit: BoxFit.cover)),
+                    );
+                  }),
+            ),
+            SizedBox(
+              height: height * .025,
+            ),
+            Text(
+              'Neue Angebote:',
+              style: TextStyle(fontSize: width * .05),
+            ),
+            SizedBox(
+              height: height * .025,
+            ),
+            SizedBox(
+              height: height * .05,
+              child: ListView.builder(
+                padding: EdgeInsets.only(left: width * .045),
+                scrollDirection: Axis.horizontal,
+                physics: BouncingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return JobOfferWidget();
+                },
+                itemCount: 21,
+              ),
+            ),
+            SizedBox(
+              height: height * .025,
+            ),
+            Text(
+              'eine Woche Arbeit:',
+              style: TextStyle(fontSize: width * .05),
+            ),
+            Expanded(
                 child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
                     physics: BouncingScrollPhysics(),
                     itemCount: 21,
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(right: width * .03),
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(width * .05),
-                            child: Image.asset('assets/images/company.jpg',
-                                width: width * .41, fit: BoxFit.cover)),
-                      );
-                    }),
-              ),
-              SizedBox(
-                height: height * .025,
-              ),
-              Text(
-                'Neue Angebote:',
-                style: TextStyle(fontSize: width * .05),
-              ),
-              SizedBox(
-                height: height * .025,
-              ),
-              SizedBox(
-                height: height * .05,
-                child: ListView.builder(
-                  padding: EdgeInsets.only(left: width * .021),
-                  scrollDirection: Axis.horizontal,
-                  physics: BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return JobOfferWidget();
-                  },
-                  itemCount: 21,
-                ),
-              ),
-              SizedBox(
-                height: height * .025,
-              ),
-              Text(
-                'eine Woche Arbeit:',
-                style: TextStyle(fontSize: width * .05),
-              ),
-              SizedBox(height: height * .019,),
-              SizedBox(
-                height: height * .67,
-                child: Expanded(
-                    child: ListView.builder(
-                        physics: BouncingScrollPhysics(),
-                        itemCount: 21,
-                        itemBuilder: (context, index) {
-                          return JobCard(userImage);
-                        })),
-              ),
-            ],
-          ),
+                      return JobCard(userImage);
+                    }))
+          ],
         ),
       ),
     );
