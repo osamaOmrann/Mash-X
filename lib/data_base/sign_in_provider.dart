@@ -57,6 +57,15 @@ class SignInProvider extends ChangeNotifier {
   List? _rates;
   List? get rates => _rates;
 
+  List? _workHistory;
+  List? get workHistory => _workHistory;
+
+  List? _skills;
+  List? get skills => _skills;
+
+  List? _intendedJobs;
+  List? get intendedJobs => _intendedJobs;
+
   SignInProvider() {
     checkSignInUser();
   }
@@ -147,6 +156,9 @@ class SignInProvider extends ChangeNotifier {
         _buildingNumber = snapshot.get('building_number') ?? 0;
         _postalCode = snapshot.get('postal_code') ?? '';
         _rates = snapshot.get('rates') ?? [];
+        _workHistory = snapshot.get('work_history') ?? [];
+        _skills = snapshot.get('skills')??[];
+        _intendedJobs = snapshot.get('intended_jobs') ?? [];
       } else {
         // Handle the case where the document does not exist
         // For example, you can throw an exception or show an error message
@@ -176,7 +188,10 @@ class SignInProvider extends ChangeNotifier {
       'st_name': _stName ?? '',
       'building_number': _buildingNumber ?? 0,
       'postal_code': _postalCode ?? '',
-      'rates': _rates?? []
+      'rates': _rates?? [],
+      'work_history': _workHistory?? [],
+      'skills': _skills??[],
+      'intended_jobs_jobs': _intendedJobs?? [],
     });
     notifyListeners();
   }
@@ -197,6 +212,9 @@ class SignInProvider extends ChangeNotifier {
     await s.setInt('building_number', _buildingNumber ?? 0);
     await s.setString('postal_code', _postalCode ?? '');
     // await s.setStringList('rates', _rates as List<String>);
+    // await s.setStringList('work_history', _workHistory as List<String>);
+    // await s.setStringList('skills', _skills as List<String>);
+    // await s.setStringList('intended_jobs', _intendedJobs as List<String>);
     notifyListeners();
   }
 
@@ -216,6 +234,9 @@ class SignInProvider extends ChangeNotifier {
     _buildingNumber = s.getInt('building_number');
     _postalCode = s.getString('postal_code');
     _rates = s.getStringList('rates');
+    _workHistory = s.getStringList('work_history');
+    _skills = s.getStringList('skills');
+    _intendedJobs = s.getStringList('intended_jobs');
     notifyListeners();
   }
 

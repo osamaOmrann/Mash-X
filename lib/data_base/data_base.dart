@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mash/data_base/product.dart';
+import 'package:mash/models/company.dart';
 import 'package:mash/models/my_user.dart';
 import 'package:mash/models/rate.dart';
 
@@ -72,8 +73,29 @@ class DataBase {
     });
   }
 
-  static Stream<QuerySnapshot<Rate>> listenForRatesRealTimeUpdates(ratesIds) {
+  static CollectionReference<Company> getCompaniesCollection() {
+    return FirebaseFirestore.instance
+        .collection(Company.collectionName)
+        .withConverter<Company>(fromFirestore: (snapshot, options) {
+      return Company.fromFireStore(snapshot.data()!);
+    }, toFirestore: (company, options) {
+      log(company.toString());
+      return company.toFireStore();
+    });
+  }
+
+  static Future<QuerySnapshot<Rate>> listenForRatesRealTimeUpdates() async {
     // Listen for realtime update
-    return getRatesCollection()/*.where("id", whereIn: ratesIds)*/.snapshots();
+    return await getRatesCollection()./*where("id", whereIn: ratesIds).*/get();
+  }
+
+  static Future<QuerySnapshot<Company>> listenForCompaniesRealTimeUpdates() async {
+    // Listen for realtime update
+    return await getCompaniesCollection()./*where("id", whereIn: ratesIds).*/get();
+  }
+
+  static Stream<QuerySnapshot<Company>> listenForCompaniesRealTimeUpdatesStream() {
+    // Listen for realtime update
+    return getCompaniesCollection()./*where("id", whereIn: ratesIds).*/snapshots();
   }
 }

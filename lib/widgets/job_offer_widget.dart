@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mash/models/company.dart';
 
 class JobOfferWidget extends StatelessWidget {
+  Company company;
+  JobOfferWidget(this.company);
 
   @override
   Widget build(BuildContext context) {

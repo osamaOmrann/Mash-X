@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mash/data_base/data_base.dart';
 import 'package:mash/main.dart';
+import 'package:mash/models/company.dart';
 import 'package:mash/models/rate.dart';
 
 class UserProfilePage extends StatefulWidget {
@@ -116,8 +117,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             Text(
                               userData['city'],
                               style: TextStyle(
-                                  color: basicColor,
-                                  fontSize: width * .039),
+                                  color: basicColor, fontSize: width * .039),
                             ),
                           ],
                         ),
@@ -132,12 +132,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 child: Text('Rates: ')),
                           ],
                         ),
-                        StreamBuilder<QuerySnapshot<Rate>>(
+                        FutureBuilder<QuerySnapshot<Rate>>(
                           builder: (buildContext, snapshot) {
                             if (snapshot.hasError) {
                               return Center(
-                                child: Text(
-                                    'Error loading date try again later'),
+                                child:
+                                    Text('Error loading date try again later'),
                               );
                             } else if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -163,23 +163,148 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                                 fontSize: 30),
                                           ),
                                         )
-                                      : Row(
-                                    children: [
-                                      Text(
-                                        '${data[index].companyName}:' ?? '',
-                                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(' ${data[index].comment}')
-                                    ],
-                                  );
+                                      : userData['rates'][index]
+                                              .contains(data[index].id)
+                                          ? Row(
+                                              children: [
+                                                Text(
+                                                  '${data[index].companyName}:' ??
+                                                      '',
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Text(' ${data[index].comment}')
+                                              ],
+                                            )
+                                          : null;
                                 },
                                 itemCount: data.length,
                               ),
                             );
                           },
-                          stream: DataBase.listenForRatesRealTimeUpdates(
-                              userData['rates']),
+                          future: DataBase.listenForRatesRealTimeUpdates(),
                         ),
+                        Row(
+                          children: [
+                            Container(
+                                padding: EdgeInsets.symmetric(vertical: 5),
+                                color: Colors.grey,
+                                child: Text('Previously worked in:')),
+                          ],
+                        ),
+                        FutureBuilder<QuerySnapshot<Company>>(
+                          builder: (buildContext, snapshot) {
+                            if (snapshot.hasError) {
+                              return Center(
+                                child:
+                                Text('Error loading date try again later'),
+                              );
+                            } else if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                child: CircularProgressIndicator(
+                                    color: basicColor),
+                              );
+                            }
+                            var data = snapshot.data?.docs
+                                .map((e) => e.data())
+                                .toList();
+                            return SizedBox(
+                              height: height * data!.length / 40,
+                              child: ListView.builder(
+                                physics: BouncingScrollPhysics(),
+                                itemBuilder: (buildContext, index) {
+                                  log('${userData['work_history'].last} ------ ${data.last.id}');
+                                  log(data.length.toString());
+                                  return data.isEmpty
+                                      ? Center(
+                                    child: Text(
+                                      'No rates yet',
+                                      style: TextStyle(
+                                          color: basicColor,
+                                          fontSize: 30),
+                                    ),
+                                  )
+                                      : userData['work_history'][index]
+                                      .contains(data[index].id)
+                                      ? Row(
+                                    children: [
+                                      Text(
+                                        '${data[index].name}:' ??
+                                            '',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight:
+                                            FontWeight.bold),
+                                      ),
+                                      Text(' ${data[index].id}')
+                                    ],
+                                  )
+                                      : null;
+                                },
+                                itemCount: data.length,
+                              ),
+                            );
+                          },
+                          future: DataBase.listenForCompaniesRealTimeUpdates(),
+                        ),
+                        Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: height * .015,
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 5),
+                                        color: Colors.grey,
+                                        child: Text('Skills:')),
+                                    SizedBox(
+                                      width: width * .1,
+                                    ),
+                                    InkWell(
+                                      child: Icon(Icons.edit),)
+                                  ],
+                                ),
+                                for (int i = 0;
+                                    i < userData['skills']?.length;
+                                    i++)
+                                  Text('* ${userData['skills'][i]}'),
+                                SizedBox(
+                                  height: height * .015,
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 5),
+                                        color: Colors.grey,
+                                        child: Text('Intended Jobs:')),
+                                    SizedBox(
+                                      width: width * .1,
+                                    ),
+                                    GestureDetector(
+                                      child: Icon(Icons.edit),
+                                    )
+                                  ],
+                                ),
+                                for (int i = 0;
+                                    i < userData['intended_jobs']?.length;
+                                    i++)
+                                  Text('* ${userData['intended_jobs'][i]}')
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: height * .015,
+                        )
                       ],
                     ),
                   ),
@@ -202,8 +327,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           children: [
                             Text(
                               userData['email'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -233,8 +357,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           children: [
                             Text(
                               '${DateTime.fromMillisecondsSinceEpoch(userData['birth_date']).day}/${DateTime.fromMillisecondsSinceEpoch(userData['birth_date']).month}/${DateTime.fromMillisecondsSinceEpoch(userData['birth_date']).year}',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -264,8 +387,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           children: [
                             Text(
                               userData['phone_number'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -295,8 +417,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           children: [
                             Text(
                               userData['city'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -326,8 +447,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           children: [
                             Text(
                               userData['st_name'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -357,8 +477,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           children: [
                             Text(
                               userData['building_number'].toString(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -388,8 +507,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                           children: [
                             Text(
                               userData['postal_code'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),

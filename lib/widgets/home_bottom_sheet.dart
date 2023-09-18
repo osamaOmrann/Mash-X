@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mash/data_base/data_base.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
 import 'package:mash/helpers/next_screen.dart';
+import 'package:mash/models/company.dart';
 import 'package:mash/screens/profile_screen.dart';
 import 'package:mash/screens/profile_screen.dart';
 import 'package:mash/screens/settings.dart';
@@ -91,7 +92,7 @@ class HomeBottomSheet extends StatelessWidget {
               itemBuilder: (context, index) {
             return Padding(
               padding: EdgeInsets.only(bottom: height * .03),
-              child: JobOfferWidget(),
+              child: JobOfferWidget(Company()),
             );
           }))
         ],

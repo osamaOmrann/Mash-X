@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:mash/data_base/data_base.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
 import 'package:mash/helpers/next_screen.dart';
 import 'package:mash/main.dart';
+import 'package:mash/models/company.dart';
 import 'package:mash/screens/complete_user_date.dart';
 import 'package:mash/widgets/home_bottom_sheet.dart';
 import 'package:mash/widgets/job_card.dart';
@@ -20,7 +22,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   String userImage = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
 
   Future<void> _getValues() async {
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
         data['postal_code'] != null &&
         data['postal_code'] != 'null' &&
         data['postal_code'] != '';
-    if(completeData == false) nextScreenReplace(context, CompleteUserData());
+    if (completeData == false) nextScreenReplace(context, CompleteUserData());
   }
 
   @override
@@ -86,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Text(
                       ' X',
                       style:
-                      TextStyle(fontSize: width * .0661, color: Colors.red),
+                          TextStyle(fontSize: width * .0661, color: Colors.red),
                     ),
                     Spacer(),
                     IconButton(
@@ -178,19 +179,46 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(
               height: height * .19,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  physics: BouncingScrollPhysics(),
-                  itemCount: 21,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(right: width * .03),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(width * .05),
-                          child: Image.asset('assets/images/company.jpg',
-                              width: width * .41, fit: BoxFit.cover)),
+              child: StreamBuilder<QuerySnapshot<Company>>(
+                builder: (buildContext, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child:
+                      Text('Error loading date try again later'),
                     );
-                  }),
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                          color: basicColor),
+                    );
+                  }
+                  var data = snapshot.data?.docs
+                      .map((e) => e.data())
+                      .toList();
+                  return SizedBox(
+                    height: height * .19,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      physics: BouncingScrollPhysics(),
+                      itemBuilder: (buildContext, index) {
+                        return data.isEmpty
+                            ? Center(
+                          child: Text(
+                            'No companies',
+                            style: TextStyle(
+                                color: basicColor,
+                                fontSize: 30),
+                          ),
+                        )
+                            : CachedNetworkImage(imageUrl: data[index].image?? '');
+                      },
+                      itemCount: data!.length,
+                    ),
+                  );
+                },
+                stream: DataBase.listenForCompaniesRealTimeUpdatesStream(),
+              ),
             ),
             SizedBox(
               height: height * .025,
@@ -203,15 +231,46 @@ class _HomeScreenState extends State<HomeScreen> {
               height: height * .025,
             ),
             SizedBox(
-              height: height * .05,
-              child: ListView.builder(
-                padding: EdgeInsets.only(left: width * .045),
-                scrollDirection: Axis.horizontal,
-                physics: BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return JobOfferWidget();
+              height: height * .07,
+              child: StreamBuilder<QuerySnapshot<Company>>(
+                builder: (buildContext, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child:
+                      Text('Error loading date try again later'),
+                    );
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                          color: basicColor),
+                    );
+                  }
+                  var data = snapshot.data?.docs
+                      .map((e) => e.data())
+                      .toList();
+                  return SizedBox(
+                    height: height * .19,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      physics: BouncingScrollPhysics(),
+                      itemBuilder: (buildContext, index) {
+                        return data.isEmpty
+                            ? Center(
+                          child: Text(
+                            'No companies',
+                            style: TextStyle(
+                                color: basicColor,
+                                fontSize: 30),
+                          ),
+                        )
+                            : JobOfferWidget(Company());
+                      },
+                      itemCount: data!.length,
+                    ),
+                  );
                 },
-                itemCount: 21,
+                stream: DataBase.listenForCompaniesRealTimeUpdatesStream(),
               ),
             ),
             SizedBox(
@@ -222,12 +281,29 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: width * .05),
             ),
             Expanded(
-                child: ListView.builder(
+                child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(DataBase.user.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error loading data try again later');
+                }
+
+                if (!snapshot.hasData) {
+                  return CircularProgressIndicator();
+                }
+
+                var userData = snapshot.data!.data() as Map<String, dynamic>;
+                return ListView.builder(
                     physics: BouncingScrollPhysics(),
                     itemCount: 21,
                     itemBuilder: (context, index) {
-                      return JobCard(userImage);
-                    }))
+                      return JobCard(userData['image_url']);
+                    });
+              },
+            ))
           ],
         ),
       ),
