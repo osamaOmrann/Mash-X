@@ -1,9 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:mash/models/company.dart';
+import 'package:mash/models/job.dart';
 
 class JobOfferWidget extends StatelessWidget {
-  Company company;
-  JobOfferWidget(this.company);
+  Job job;
+  JobOfferWidget(this.job);
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +19,18 @@ class JobOfferWidget extends StatelessWidget {
             child: Container(
               width: height * .05,
                 height: height * .05,
-                child: Image.asset('assets/images/company.jpg', fit: BoxFit.cover,)),
+                child: CachedNetworkImage(
+                  imageUrl: job.companyImage ?? '',
+                  fit: BoxFit.contain,
+                )),
           ),
           SizedBox(width: width * .025,),
           Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Company name'),
-              SizedBox(height: height * .01,),
-              Text('Job title ...', style: TextStyle(color: Colors.grey),),
+              Text(job.companyName ?? ''),
+              Text(job.jobTitle ?? '', style: TextStyle(color: Colors.grey),),
             ],
           )
         ],

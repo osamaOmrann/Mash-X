@@ -4,8 +4,8 @@ import 'package:mash/helpers/next_screen.dart';
 import 'package:mash/screens/auth/login_screen.dart';
 import 'package:provider/provider.dart';
 
-class Settings extends StatelessWidget {
-  const Settings({super.key});
+class Settings_Screen extends StatelessWidget {
+  const Settings_Screen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mash/data_base/data_base.dart';
 import 'package:mash/data_base/sign_in_provider.dart';
 import 'package:mash/helpers/next_screen.dart';
-import 'package:mash/models/company.dart';
-import 'package:mash/screens/profile_screen.dart';
+import 'package:mash/main.dart';
+import 'package:mash/models/job.dart';
 import 'package:mash/screens/profile_screen.dart';
 import 'package:mash/screens/settings.dart';
 import 'package:mash/screens/store_screen.dart';
@@ -56,7 +57,7 @@ class HomeBottomSheet extends StatelessWidget {
                   child: Image.asset('assets/images/bag.png', width: width * .081,)),
               SizedBox(width: width * .061,),
               GestureDetector(
-                onTap: () {nextScreen(context, Settings());},
+                onTap: () {nextScreen(context, Settings_Screen());},
                   child: Icon(Icons.settings, color: Color(0xff3392ee), size: width * .09,)),
               SizedBox(width: width * .06,),
               Image.asset('assets/images/telegram.png', width: width * .081,),
@@ -86,15 +87,49 @@ class HomeBottomSheet extends StatelessWidget {
           SizedBox(height: height * .045,),
           Text('Menü:', style: TextStyle(fontSize: width * .055),),
           SizedBox(height: height * .019,),
-          Expanded(child: ListView.builder(
-            physics: BouncingScrollPhysics(),
-              itemCount: 21,
-              itemBuilder: (context, index) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: height * .03),
-              child: JobOfferWidget(Company()),
-            );
-          }))
+          Expanded(child: StreamBuilder<QuerySnapshot<Job>>(
+            builder: (buildContext, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child:
+                  Text('Error loading date try again later'),
+                );
+              } else if (snapshot.connectionState ==
+                  ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(
+                      color: basicColor),
+                );
+              }
+              var data = snapshot.data?.docs
+                  .map((e) => e.data())
+                  .toList();
+
+              return SizedBox(
+                height: height * .19,
+                child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  itemBuilder: (buildContext, index) {
+                    return data.isEmpty
+                        ? Center(
+                      child: Text(
+                        'No jobs',
+                        style: TextStyle(
+                            color: basicColor,
+                            fontSize: 30),
+                      ),
+                    )
+                        : Padding(
+                          padding: EdgeInsets.only(bottom: height * .017),
+                          child: JobOfferWidget(data[index]),
+                        );
+                  },
+                  itemCount: data!.length,
+                ),
+              );
+            },
+            stream: DataBase.listenForJobsRealTimeUpdatesStream(),
+          ))
         ],
       ),
     );

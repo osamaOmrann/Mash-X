@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:mash/data_base/product.dart';
 import 'package:mash/models/company.dart';
+import 'package:mash/models/job.dart';
 import 'package:mash/models/my_user.dart';
 import 'package:mash/models/rate.dart';
 
@@ -84,6 +85,17 @@ class DataBase {
     });
   }
 
+  static CollectionReference<Job> getJobsCollection() {
+    return FirebaseFirestore.instance
+        .collection(Job.collectionName)
+        .withConverter<Job>(fromFirestore: (snapshot, options) {
+      return Job.fromFireStore(snapshot.data()!);
+    }, toFirestore: (job, options) {
+      log(job.toString());
+      return job.toFireStore();
+    });
+  }
+
   static Future<QuerySnapshot<Rate>> listenForRatesRealTimeUpdates() async {
     // Listen for realtime update
     return await getRatesCollection()./*where("id", whereIn: ratesIds).*/get();
@@ -97,5 +109,10 @@ class DataBase {
   static Stream<QuerySnapshot<Company>> listenForCompaniesRealTimeUpdatesStream() {
     // Listen for realtime update
     return getCompaniesCollection()./*where("id", whereIn: ratesIds).*/snapshots();
+  }
+
+  static Stream<QuerySnapshot<Job>> listenForJobsRealTimeUpdatesStream() {
+    // Listen for realtime update
+    return getJobsCollection()./*where("id", whereIn: ratesIds).*/snapshots();
   }
 }

@@ -150,7 +150,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 .map((e) => e.data())
                                 .toList();
                             return SizedBox(
-                              height: height * data!.length / 40,
+                              height: height * userData['rates'].length / 40,
                               child: ListView.builder(
                                 physics: BouncingScrollPhysics(),
                                 itemBuilder: (buildContext, index) {
@@ -180,7 +180,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                             )
                                           : null;
                                 },
-                                itemCount: data.length,
+                                itemCount: data!.length,
                               ),
                             );
                           },
@@ -212,7 +212,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                 .map((e) => e.data())
                                 .toList();
                             return SizedBox(
-                              height: height * data!.length / 40,
+                              height: height * userData['worK_history'].length / 40,
                               child: ListView.builder(
                                 physics: BouncingScrollPhysics(),
                                 itemBuilder: (buildContext, index) {
@@ -221,7 +221,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                   return data.isEmpty
                                       ? Center(
                                     child: Text(
-                                      'No rates yet',
+                                      'No work yet',
                                       style: TextStyle(
                                           color: basicColor,
                                           fontSize: 30),
@@ -239,12 +239,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                             fontWeight:
                                             FontWeight.bold),
                                       ),
-                                      Text(' ${data[index].id}')
                                     ],
                                   )
                                       : null;
                                 },
-                                itemCount: data.length,
+                                itemCount: data!.length,
                               ),
                             );
                           },
