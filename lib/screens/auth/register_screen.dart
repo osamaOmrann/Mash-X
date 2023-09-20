@@ -213,6 +213,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: registerController,
                     onPressed: () => createAccountCliked(),
                     child: Text('Register')),
+                SizedBox(height: height * .03,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Already have an account?'),
+                    TextButton(
+                        onPressed: () {
+                          nextScreenReplace(context, LoginScreen());
+                        },
+                        child: Text(
+                          'Login',
+                          style: TextStyle(color: Color(0xff6850a4)),
+                        ))
+                  ],
+                ),
                 SizedBox(
                   height: height * .021,
                 ),
@@ -244,23 +259,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       width: width * .13,
                       borderRadius: width * .05,
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: height * .021,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Already have an account?'),
-                    TextButton(
-                        onPressed: () {
-                          nextScreenReplace(context, LoginScreen());
-                        },
-                        child: Text(
-                          'Login',
-                          style: TextStyle(color: Color(0xff6850a4)),
-                        ))
                   ],
                 )
               ],

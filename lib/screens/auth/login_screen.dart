@@ -146,6 +146,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: loginController,
                     onPressed: () => emailPasswordLogin(),
                     child: Text('Login')),
+                SizedBox(height: height * .03,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Don\'t have account?'),
+                    TextButton(
+                        onPressed: () {
+                          nextScreenReplace(context, RegisterScreen());
+                        },
+                        child: Text(
+                          'Sign up',
+                          style: TextStyle(color: Color(0xff6850a4)),
+                        ))
+                  ],
+                ),
                 SizedBox(
                   height: height * .03,
                 ),
@@ -177,23 +192,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: width * .13,
                       borderRadius: width * .05,
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: height * .03,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Don\'t have account?'),
-                    TextButton(
-                        onPressed: () {
-                          nextScreenReplace(context, RegisterScreen());
-                        },
-                        child: Text(
-                          'Sign up',
-                          style: TextStyle(color: Color(0xff6850a4)),
-                        ))
                   ],
                 )
               ],

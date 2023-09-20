@@ -179,6 +179,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
             },
             verificationFailed: (FirebaseAuthException e) {
               openSnackBar(context, e.toString(), basicColor);
+              submitController.reset();
             },
             codeSent: (String verificationId, int? forceResendingToken) {
               showDialog(
@@ -267,7 +268,12 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
                     );
                   });
             },
-            codeAutoRetrievalTimeout: (String verification) {});
+            codeAutoRetrievalTimeout: (String verification) {
+              log('Code retrieval timeout');
+              Navigator.pop(context);
+              openSnackBar(context, 'Timeout. Try again', basicColor);
+              submitController.reset();
+            });
       } else {
         submitController.reset();
         openSnackBar(context, 'Valid data is required', basicColor);
