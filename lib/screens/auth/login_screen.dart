@@ -29,7 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
       RoundedLoadingButtonController();
   final RoundedLoadingButtonController phoneController =
       RoundedLoadingButtonController();
-  final RoundedLoadingButtonController loginController = RoundedLoadingButtonController();
+  final RoundedLoadingButtonController loginController =
+      RoundedLoadingButtonController();
   bool securePassword = true;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -66,9 +67,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontSize: width * .07, color: Color(0xff6850a4)))
                   ],
                 ),
-                SizedBox(height: height * .1,),
+                SizedBox(
+                  height: height * .1,
+                ),
                 Text('Login'),
-                SizedBox(height: height * .041,),
+                SizedBox(
+                  height: height * .041,
+                ),
                 TextFormField(
                   controller: emailController,
                   validator: (text) {
@@ -131,7 +136,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderSide: BorderSide(),
                           borderRadius: BorderRadius.circular(width * .061))),
                 ),
-                SizedBox(height: height * .07,),
+                SizedBox(
+                  height: height * .07,
+                ),
                 RoundedLoadingButton(
                     successColor: basicColor,
                     color: basicColor,
@@ -139,7 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: loginController,
                     onPressed: () => emailPasswordLogin(),
                     child: Text('Login')),
-                SizedBox(height: height * .03,),
+                SizedBox(
+                  height: height * .03,
+                ),
                 Text('Or login with'),
                 SizedBox(
                   height: height * .023,
@@ -205,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
           context, 'Check your internet connection', Color(0xff6850a4));
       googleController.reset();
     } else {
-      sp.userSignOut();
+      await sp.userSignOut();
       await sp.signInWithGoogle().then((value) {
         if (sp.hasError == true) {
           openSnackBar(context, sp.errorCode.toString(), basicColor);
@@ -214,13 +223,13 @@ class _LoginScreenState extends State<LoginScreen> {
           //Checking User Existence
           sp.checkUserExists().then((value) async {
             if (value == true) {
-              try{
+              try {
                 await sp.getUserDataFromFireStore(sp.uid).then((value) => sp
                     .saveDataToSharedPreferences()
                     .then((value) => sp.setSignIn().then((value) {
-                  googleController.success();
-                  handleAfterSigningIn();
-                })));
+                          googleController.success();
+                          handleAfterSigningIn();
+                        })));
               } catch (e) {
                 // Handle the error, e.g., show an error message to the user
                 log('Failed to retrieve user data: $e');
@@ -244,15 +253,14 @@ class _LoginScreenState extends State<LoginScreen> {
     var ip = context.read<InternetProvider>();
     await ip.checkInternetConnection();
     if (ip.hasInternet == false) {
-      openSnackBar(
-          context, 'Check your internet connection', basicColor);
+      openSnackBar(context, 'Check your internet connection', basicColor);
       loginController.reset();
     } else if (formKey.currentState?.validate() == false) {
       loginController.reset();
       return;
     }
-     try {
-       sp.userSignOut();
+    try {
+      sp.userSignOut();
       sp.firebaseAuth
           .signInWithEmailAndPassword(
               email: emailController.text, password: passwordController.text)
@@ -261,19 +269,21 @@ class _LoginScreenState extends State<LoginScreen> {
           openSnackBar(context, sp.errorCode.toString(), basicColor);
           loginController.reset();
         } else {
-          User user = (await FirebaseAuth.instance
-              .signInWithEmailAndPassword(email: emailController.text, password: passwordController.text))
-            .user!;
-        sp.emailPasswordUser(user, emailController.text, sp.firebaseAuth.currentUser?.displayName, passwordController.text);
-          await sp
-              .getUserDataFromFireStore(sp.uid)
-              .then((value) => sp
+          User user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: emailController.text,
+                  password: passwordController.text))
+              .user!;
+          sp.emailPasswordUser(
+              user,
+              emailController.text,
+              sp.firebaseAuth.currentUser?.displayName,
+              passwordController.text);
+          await sp.getUserDataFromFireStore(sp.uid).then((value) => sp
               .saveDataToSharedPreferences()
-              .then((value) =>
-              sp.setSignIn().then((value) {
-                loginController.success();
-                handleAfterSigningIn();
-              })));
+              .then((value) => sp.setSignIn().then((value) {
+                    loginController.success();
+                    handleAfterSigningIn();
+                  })));
         }
       }).onError((error, stackTrace) {
         if (error.toString().contains('The password is invalid') ||
@@ -284,8 +294,8 @@ class _LoginScreenState extends State<LoginScreen> {
         loginController.reset();
       });
     } on FirebaseAuthException catch (e) {
-       openSnackBar(context, 'Invalid email or password', basicColor);
-     }
+      openSnackBar(context, 'Invalid email or password', basicColor);
+    }
   }
 
   handleAfterSigningIn() {

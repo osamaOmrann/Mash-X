@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mash/data_base/data_base.dart';
@@ -9,6 +10,7 @@ import 'package:mash/helpers/next_screen.dart';
 import 'package:mash/main.dart';
 import 'package:mash/models/company.dart';
 import 'package:mash/models/job.dart';
+import 'package:mash/screens/auth/login_screen.dart';
 import 'package:mash/screens/complete_user_date.dart';
 import 'package:mash/widgets/home_bottom_sheet.dart';
 import 'package:mash/widgets/job_card.dart';
@@ -55,6 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    if (FirebaseAuth.instance.currentUser == null)
+      nextScreenReplace(context, LoginScreen());
     _getValues();
   }
 
@@ -193,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (snapshot.hasError) {
                               return Center(
                                 child:
-                                Text('Error loading date try again later'),
+                                    Text('Error loading date try again later'),
                               );
                             } else if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -213,26 +217,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                 itemBuilder: (buildContext, index) {
                                   return data.isEmpty
                                       ? Center(
-                                    child: Text(
-                                      'No companies',
-                                      style: TextStyle(
-                                          color: basicColor,
-                                          fontSize: 30),
-                                    ),
-                                  )
+                                          child: Text(
+                                            'No companies',
+                                            style: TextStyle(
+                                                color: basicColor,
+                                                fontSize: 30),
+                                          ),
+                                        )
                                       : Padding(
-                                        padding: EdgeInsets.only(right: width * .05),
-                                        child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(width * .05),
-                                          child: CachedNetworkImage(imageUrl: data[index].image?? ''),
-                                        ),
-                                      );
+                                          padding: EdgeInsets.only(
+                                              right: width * .05),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                                width * .05),
+                                            child: CachedNetworkImage(
+                                                imageUrl:
+                                                    data[index].image ?? ''),
+                                          ),
+                                        );
                                 },
                                 itemCount: data!.length,
                               ),
                             );
                           },
-                          stream: DataBase.listenForCompaniesRealTimeUpdatesStream(),
+                          stream: DataBase
+                              .listenForCompaniesRealTimeUpdatesStream(),
                         ),
                       ),
                       SizedBox(
@@ -252,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (snapshot.hasError) {
                               return Center(
                                 child:
-                                Text('Error loading date try again later'),
+                                    Text('Error loading date try again later'),
                               );
                             } else if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -273,13 +282,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 itemBuilder: (buildContext, index) {
                                   return data.isEmpty
                                       ? Center(
-                                    child: Text(
-                                      'No jobs',
-                                      style: TextStyle(
-                                          color: basicColor,
-                                          fontSize: 30),
-                                    ),
-                                  )
+                                          child: Text(
+                                            'No jobs',
+                                            style: TextStyle(
+                                                color: basicColor,
+                                                fontSize: 30),
+                                          ),
+                                        )
                                       : JobOfferWidget(data[index]);
                                 },
                                 itemCount: data!.length,
@@ -300,31 +309,35 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: height * .61,
                         child: StreamBuilder(
                           stream: FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(DataBase.user.uid)
-                          .snapshots(),
+                              .collection('users')
+                              .doc(DataBase.user.uid)
+                              .snapshots(),
                           builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Text('Error loading data try again later');
-                        }
+                            if (snapshot.hasError) {
+                              return Text('Error loading data try again later');
+                            }
 
-                        if (!snapshot.hasData) {
-                          return CircularProgressIndicator();
-                        }
+                            if (!snapshot.hasData) {
+                              return Center(
+                                  child: CircularProgressIndicator(
+                                color: basicColor,
+                              ));
+                            }
 
-                        var userData = snapshot.data!.data() as Map<String, dynamic>;
-                        return ScrollConfiguration(
-                          behavior: ScrollBehavior(),
-                          child: GlowingOverscrollIndicator(
-                            axisDirection: AxisDirection.down,
-                            color: Colors.white,
-                            child: ListView.builder(
-                                itemCount: 21,
-                                itemBuilder: (context, index) {
-                                  return JobCard(userData['image_url']);
-                                }),
-                          ),
-                        );
+                            var userData =
+                                snapshot.data!.data() as Map<String, dynamic>;
+                            return ScrollConfiguration(
+                              behavior: ScrollBehavior(),
+                              child: GlowingOverscrollIndicator(
+                                axisDirection: AxisDirection.down,
+                                color: Colors.white,
+                                child: ListView.builder(
+                                    itemCount: 21,
+                                    itemBuilder: (context, index) {
+                                      return JobCard(userData['image_url']);
+                                    }),
+                              ),
+                            );
                           },
                         ),
                       ),

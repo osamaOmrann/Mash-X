@@ -7,7 +7,7 @@ import 'package:mash/helpers/next_screen.dart';
 import 'package:mash/main.dart';
 import 'package:mash/models/job.dart';
 import 'package:mash/screens/profile_screen.dart';
-import 'package:mash/screens/settings.dart';
+import 'package:mash/screens/settings_screen.dart';
 import 'package:mash/screens/store_screen.dart';
 import 'package:mash/widgets/job_offer_widget.dart';
 import 'package:provider/provider.dart';

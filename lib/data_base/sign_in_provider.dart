@@ -145,8 +145,7 @@ class SignInProvider extends ChangeNotifier {
         _email = snapshot.get('email') ?? '';
         _imageUrl = snapshot.get('image_url') ?? '';
         _provider = snapshot.get('provider') ?? '';
-        _password =
-            snapshot.get('password') ?? '';
+        _password = snapshot.get('password') ?? '';
         _phoneNumber = snapshot.get('phone_number') ?? '';
         _birthDate = snapshot.get('birth_date') != null
             ? DateTime.fromMillisecondsSinceEpoch(snapshot.get('birth_date'))
@@ -157,7 +156,7 @@ class SignInProvider extends ChangeNotifier {
         _postalCode = snapshot.get('postal_code') ?? '';
         _rates = snapshot.get('rates') ?? [];
         _workHistory = snapshot.get('work_history') ?? [];
-        _skills = snapshot.get('skills')??[];
+        _skills = snapshot.get('skills') ?? [];
         _intendedJobs = snapshot.get('intended_jobs') ?? [];
       } else {
         // Handle the case where the document does not exist
@@ -188,10 +187,10 @@ class SignInProvider extends ChangeNotifier {
       'st_name': _stName ?? '',
       'building_number': _buildingNumber ?? 0,
       'postal_code': _postalCode ?? '',
-      'rates': _rates?? [],
-      'work_history': _workHistory?? [],
-      'skills': _skills??[],
-      'intended_jobs_jobs': _intendedJobs?? [],
+      'rates': _rates ?? [],
+      'work_history': _workHistory ?? [],
+      'skills': _skills ?? [],
+      'intended_jobs': _intendedJobs ?? [],
     });
     notifyListeners();
   }
@@ -205,8 +204,7 @@ class SignInProvider extends ChangeNotifier {
     await s.setString('provider', _provider ?? '');
     await s.setString('password', _password ?? '');
     await s.setString('phone_number', _phoneNumber ?? '');
-    await s.setInt(
-        'birth_date', _birthDate?.millisecondsSinceEpoch ?? 0);
+    await s.setInt('birth_date', _birthDate?.millisecondsSinceEpoch ?? 0);
     await s.setString('city', _city ?? '');
     await s.setString('st_name', _stName ?? '');
     await s.setInt('building_number', _buildingNumber ?? 0);
@@ -218,7 +216,6 @@ class SignInProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   Future getDataFromSharedPreferences() async {
     final SharedPreferences s = await SharedPreferences.getInstance();
     _name = s.getString('name');
@@ -228,7 +225,8 @@ class SignInProvider extends ChangeNotifier {
     _provider = s.getString('provider');
     _password = s.getString('password');
     _phoneNumber = s.getString('phone_number');
-    _birthDate = DateTime.fromMillisecondsSinceEpoch(s.getInt('birth_date') ?? 0);
+    _birthDate =
+        DateTime.fromMillisecondsSinceEpoch(s.getInt('birth_date') ?? 0);
     _city = s.getString('city');
     _stName = s.getString('st_name');
     _buildingNumber = s.getInt('building_number');

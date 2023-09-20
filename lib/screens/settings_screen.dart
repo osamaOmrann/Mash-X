@@ -5,15 +5,14 @@ import 'package:mash/screens/auth/login_screen.dart';
 import 'package:provider/provider.dart';
 
 class Settings_Screen extends StatelessWidget {
-  const Settings_Screen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final sp = context.watch<SignInProvider>();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          sp.userSignOut();
+        onPressed: () async {
+          await sp.userSignOut();
           nextScreenReplace(context, LoginScreen());
         },
         child: Text('Log out', style: TextStyle(fontSize: 9),),
