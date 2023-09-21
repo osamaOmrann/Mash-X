@@ -51,6 +51,9 @@ dependencies:
   flutter_cache_manager: any
   image_picker: ^1.0.4
   firebase_storage: any
+  google_maps_flutter: ^2.5.0
+  yandex_geocoder: ^2.1.0
+  flutter_custom_clippers: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -91,8 +94,11 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: backHome
+    - family: denala
       fonts:
-        - asset: assets/fonts/back_home.otf
+        - asset: assets/fonts/denala.ttf
+    - family: foxescookies
+      fonts:
+        - asset: assets/fonts/foxescookies.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

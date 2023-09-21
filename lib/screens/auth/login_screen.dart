@@ -146,7 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     controller: loginController,
                     onPressed: () => emailPasswordLogin(),
                     child: Text('Login')),
-                SizedBox(height: height * .03,),
+                SizedBox(
+                  height: height * .03,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

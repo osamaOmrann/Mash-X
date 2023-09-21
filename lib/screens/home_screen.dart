@@ -82,17 +82,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'Mash',
+                      'Mash ',
                       style: TextStyle(
                           color: Color(0xff98a6f3),
                           fontSize: width * .061,
-                          fontFamily: 'backHome',
+                          fontFamily: 'foxescookies',
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      ' X',
+                      'X',
                       style:
-                          TextStyle(fontSize: width * .0661, color: Colors.red),
+                          TextStyle(fontSize: width * .085, color: Colors.red, fontFamily: 'denala', fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
                     IconButton(
@@ -136,20 +136,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          log(sp.firebaseAuth.currentUser!.phoneNumber ?? '');
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: width * .05, vertical: height * .01),
-                          decoration: BoxDecoration(
-                              color: basicColor,
-                              borderRadius: BorderRadius.circular(width * .05)),
-                          child: Text(
-                            'Kl-Suche',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: width * .05, vertical: height * .01),
+                        decoration: BoxDecoration(
+                            color: basicColor,
+                            borderRadius: BorderRadius.circular(width * .05)),
+                        child: Text(
+                          'AI-Search',
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                       Container(
@@ -305,41 +300,32 @@ class _HomeScreenState extends State<HomeScreen> {
                         'eine Woche Arbeit:',
                         style: TextStyle(fontSize: width * .05),
                       ),
-                      SizedBox(
-                        height: height * .61,
-                        child: StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(DataBase.user.uid)
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              return Text('Error loading data try again later');
-                            }
+                      SizedBox(height: height * .015,),
+                      StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(DataBase.user.uid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error loading data try again later');
+                          }
 
-                            if (!snapshot.hasData) {
-                              return Center(
-                                  child: CircularProgressIndicator(
-                                color: basicColor,
-                              ));
-                            }
+                          if (!snapshot.hasData) {
+                            return Center(
+                                child: CircularProgressIndicator(
+                              color: basicColor,
+                            ));
+                          }
 
-                            var userData =
-                                snapshot.data!.data() as Map<String, dynamic>;
-                            return ScrollConfiguration(
-                              behavior: ScrollBehavior(),
-                              child: GlowingOverscrollIndicator(
-                                axisDirection: AxisDirection.down,
-                                color: Colors.white,
-                                child: ListView.builder(
-                                    itemCount: 21,
-                                    itemBuilder: (context, index) {
-                                      return JobCard(userData['image_url']);
-                                    }),
-                              ),
-                            );
-                          },
-                        ),
+                          var userData =
+                              snapshot.data!.data() as Map<String, dynamic>;
+                          return Column(
+                            children: [
+                              for (int i = 0; i < 21; i ++) JobCard(userData['image_url']),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),

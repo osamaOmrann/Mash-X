@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mash/data_base/data_base.dart';
-import 'package:mash/data_base/product.dart';
+import 'package:mash/models/product.dart';
 import 'package:mash/main.dart';
 import 'package:mash/widgets/product_widget.dart';
 

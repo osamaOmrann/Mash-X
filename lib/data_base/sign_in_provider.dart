@@ -66,6 +66,21 @@ class SignInProvider extends ChangeNotifier {
   List? _intendedJobs;
   List? get intendedJobs => _intendedJobs;
 
+  String? _jobTitle;
+  String? get jobTitle => _jobTitle;
+
+  double? _jobSuccess;
+  double? get jobSuccess => _jobSuccess;
+
+  double? _stars;
+  double? get stars => _stars;
+
+  int? _salary;
+  int? get salary => _salary;
+
+  String? _about;
+  String? get about => _about;
+
   SignInProvider() {
     checkSignInUser();
   }
@@ -158,6 +173,11 @@ class SignInProvider extends ChangeNotifier {
         _workHistory = snapshot.get('work_history') ?? [];
         _skills = snapshot.get('skills') ?? [];
         _intendedJobs = snapshot.get('intended_jobs') ?? [];
+        _jobTitle = snapshot.get('job_title') ?? '';
+        _jobSuccess = snapshot.get('job_success') ?? 0;
+        _stars = snapshot.get('stars') ?? 0;
+        _salary = snapshot.get('salary') ?? 0;
+        _about = snapshot.get('about') ?? '';
       } else {
         // Handle the case where the document does not exist
         // For example, you can throw an exception or show an error message
@@ -191,6 +211,11 @@ class SignInProvider extends ChangeNotifier {
       'work_history': _workHistory ?? [],
       'skills': _skills ?? [],
       'intended_jobs': _intendedJobs ?? [],
+      'job_title': _jobTitle ?? '',
+      'job_success': _jobSuccess ?? 0,
+      'stars': _stars ?? 0,
+      'salary': _salary ?? 0,
+      'about': _about ?? 0,
     });
     notifyListeners();
   }
@@ -213,6 +238,11 @@ class SignInProvider extends ChangeNotifier {
     // await s.setStringList('work_history', _workHistory as List<String>);
     // await s.setStringList('skills', _skills as List<String>);
     // await s.setStringList('intended_jobs', _intendedJobs as List<String>);
+    await s.setString('job_title', _jobTitle ?? '');
+    await s.setDouble('job_success', _jobSuccess ?? 0);
+    await s.setDouble('stars', _stars ?? 0);
+    await s.setInt('salary', _salary ?? 0);
+    await s.setString('about', _about ?? '');
     notifyListeners();
   }
 
@@ -235,6 +265,11 @@ class SignInProvider extends ChangeNotifier {
     _workHistory = s.getStringList('work_history');
     _skills = s.getStringList('skills');
     _intendedJobs = s.getStringList('intended_jobs');
+    _jobTitle = s.getString('job_title');
+    _jobSuccess = s.getDouble('job_success');
+    _stars = s.getDouble('stars');
+    _salary = s.getInt('salary');
+    _about = s.getString('about');
     notifyListeners();
   }
 
@@ -285,28 +320,5 @@ class SignInProvider extends ChangeNotifier {
     _password = password;
     _provider = 'EMAIL AND PASSWORD';
     notifyListeners();
-  }
-}
-
-class SharedHelper {
-  static SharedPreferences? sP;
-  static init() async {
-    sP = await SharedPreferences.getInstance();
-  }
-
-  static Future<bool> saveData(
-      {required String key, required dynamic value}) async {
-    if (value is String) return await sP!.setString(key, value);
-    if (value is int) return await sP!.setInt(key, value);
-    if (value is bool) return await sP!.setBool(key, value);
-    return await sP!.setDouble(key, value);
-  }
-
-  static dynamic getData({required String key}) {
-    return sP?.get(key);
-  }
-
-  static Future<bool> deleteData({required String key}) async {
-    return await sP!.remove(key);
   }
 }

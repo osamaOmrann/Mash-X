@@ -213,7 +213,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: registerController,
                     onPressed: () => createAccountCliked(),
                     child: Text('Register')),
-                SizedBox(height: height * .03,),
+                SizedBox(
+                  height: height * .03,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -334,16 +336,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
         openSnackBar(context, sp.errorCode.toString(), basicColor);
         registerController.reset();
       } else {
-        User user = (await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: emailController.text, password: passwordController.text))
-          .user!;
-        sp.emailPasswordUser(user, emailController.text, nameController.text, passwordController.text);
+        User user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
+                email: emailController.text, password: passwordController.text))
+            .user!;
+        sp.emailPasswordUser(user, emailController.text, nameController.text,
+            passwordController.text);
         sp.saveDataToFireStore().then((value) => sp
             .saveDataToSharedPreferences()
             .then((value) => sp.setSignIn().then((value) {
-          registerController.success();
-          handleAfterSigningIn();
-        })));
+                  registerController.success();
+                  handleAfterSigningIn();
+                })));
       }
     }).onError((error, stackTrace) {
       if (error
@@ -353,7 +356,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             context,
             'The email address is already in use by another account',
             basicColor);
-      if(error.toString().contains('badly formatted')) openSnackBar(context, 'Enter a valid email address', basicColor);
+      if (error.toString().contains('badly formatted'))
+        openSnackBar(context, 'Enter a valid email address', basicColor);
       else
         openSnackBar(context, error.toString(), basicColor);
       registerController.reset();

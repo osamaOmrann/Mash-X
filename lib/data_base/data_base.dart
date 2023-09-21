@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:mash/data_base/product.dart';
+import 'package:mash/models/product.dart';
 import 'package:mash/models/company.dart';
 import 'package:mash/models/job.dart';
 import 'package:mash/models/my_user.dart';
