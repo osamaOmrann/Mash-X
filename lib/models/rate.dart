@@ -1,33 +1,35 @@
 class Rate {
   static const String collectionName = 'rates';
-  String? id, comment, ratedUserId, companyName;
+  String? id, comment, name, image;
   int? rateValue;
   DateTime? dateTime;
 
   Rate(
       {this.id,
         this.comment,
-        this.ratedUserId,
         this.rateValue,
-        this.dateTime, this.companyName});
+        this.name,
+        this.image,
+        this.dateTime});
 
   Rate.fromFireStore(Map<String, dynamic> data)
       : this(
       id: data['id'],
       comment: data['comment'],
-      ratedUserId: data['ratedUserId'],
       rateValue: data['rateValue'],
+      name: data['name'],
+      image: data['image'],
       dateTime: DateTime.fromMillisecondsSinceEpoch(data['dateTime']),
-      companyName: data['companyName']);
+      );
 
   Map<String, dynamic> toFireStore() {
     return {
       'id': id,
       'comment': comment,
-      'ratedUserId': ratedUserId,
       'rateValue': rateValue,
       'dateTime': dateTime?.millisecondsSinceEpoch,
-      'companyName': companyName
+      'name': name,
+      'image': image
     };
   }
 }

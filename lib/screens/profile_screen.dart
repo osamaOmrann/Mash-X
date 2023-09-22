@@ -116,13 +116,16 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: width * .3),
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(width),
+                                      borderRadius:
+                                          BorderRadius.circular(width),
                                       child: CachedNetworkImage(
                                           fit: BoxFit.cover,
                                           imageUrl: userData['image_url']),
                                     ),
                                   ),
-                                  SizedBox(height: height * .015,)
+                                  SizedBox(
+                                    height: height * .015,
+                                  )
                                 ],
                               ),
                               Positioned(
@@ -317,112 +320,278 @@ class _UserProfilePageState extends State<UserProfilePage> {
                     SizedBox(
                       height: height * .013,
                     ),
-                    if(userInfo == true) Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(width * .023),
-                          color: Colors.white),
-                      padding: EdgeInsets.symmetric(vertical: height * .03, horizontal: width * .03),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text('Gehalt:', style: TextStyle(color: Color(0xff0c2954), fontSize: width * .043),),
-                              Spacer(),
-                              Text('${userData['salary']} €', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),)
-                            ],
-                          ),
-                          SizedBox(height: height * .03,),
-                          Row(
-                            children: [
-                              Text('About Me', style: TextStyle(color: Color(0xff0c2954), fontSize: width * .043),),
-                              Spacer(),
-                              Text('Edit', style: TextStyle(color: Colors.yellow.shade700),)
-                            ],
-                          ),
-                          SizedBox(height: height * .025,),
-                          Text('${userData['about']}', style: TextStyle(color: Colors.grey),)
-                        ],
+                    if (userInfo == true)
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(width * .023),
+                            color: Colors.white),
+                        padding: EdgeInsets.symmetric(
+                            vertical: height * .03, horizontal: width * .03),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'Gehalt:',
+                                  style: TextStyle(
+                                      color: Color(0xff0c2954),
+                                      fontSize: width * .043),
+                                ),
+                                Spacer(),
+                                Text(
+                                  '${userData['salary']} €',
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: height * .03,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  'About Me',
+                                  style: TextStyle(
+                                      color: Color(0xff0c2954),
+                                      fontSize: width * .043),
+                                ),
+                                Spacer(),
+                                Text(
+                                  'Edit',
+                                  style:
+                                      TextStyle(color: Colors.yellow.shade700),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: height * .025,
+                            ),
+                            Text(
+                              '${userData['about']}',
+                              style: TextStyle(color: Colors.grey),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    if(userInfo == true) Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(width * .023),
-                          color: Colors.white),
-                      padding: EdgeInsets.symmetric(vertical: height * .03, horizontal: width * .03),
-                      margin: EdgeInsets.only(top: height * .013),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text('Contact:', style: TextStyle(color: Color(0xff0c2954), fontSize: width * .043),),
-                              Spacer(),
-                              Text('Edit', style: TextStyle(color: Colors.yellow.shade700),)
-                            ],
-                          ),
-                          SizedBox(height: height * .019,),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(width * .021),
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(width * .041),
-                                    color: Color(0xffcfcfcf)),
-                                child: Center(
-                                    child: Icon(
-                                      Icons.phone,
+                    if (userInfo == true)
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(width * .023),
+                            color: Colors.white),
+                        padding: EdgeInsets.symmetric(
+                            vertical: height * .03, horizontal: width * .03),
+                        margin: EdgeInsets.only(top: height * .013),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  'Contact:',
+                                  style: TextStyle(
                                       color: Color(0xff0c2954),
-                                    )),
-                              ),
-                              SizedBox(width: width * .05,),
-                              Text(userData['phone_number'])
-                            ],
-                          ),
-                          SizedBox(height: height * .01,),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(width * .021),
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(width * .041),
-                                    color: Color(0xffcfcfcf)),
-                                child: Center(
-                                    child: Icon(
-                                      Icons.mail,
-                                      color: Color(0xff0c2954),
-                                    )),
-                              ),
-                              SizedBox(width: width * .05,),
-                              Text(userData['email'])
-                            ],
-                          ),
-                          SizedBox(height: height * .01,),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(width * .021),
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(width * .041),
-                                    color: Color(0xffcfcfcf)),
-                                child: Center(
-                                    child: Icon(
-                                      Icons.location_on,
-                                      color: Color(0xff0c2954),
-                                    )),
-                              ),
-                              SizedBox(width: width * .05,),
-                              Text('${userData['building_number']} ${userData['st_name']} st, ${userData['city']}')
-                            ],
-                          )
-                        ],
+                                      fontSize: width * .043),
+                                ),
+                                Spacer(),
+                                Text(
+                                  'Edit',
+                                  style:
+                                      TextStyle(color: Colors.yellow.shade700),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: height * .019,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(width * .021),
+                                  decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(width * .041),
+                                      color: Color(0xffcfcfcf)),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.phone,
+                                    color: Color(0xff0c2954),
+                                  )),
+                                ),
+                                SizedBox(
+                                  width: width * .05,
+                                ),
+                                Text(userData['phone_number'])
+                              ],
+                            ),
+                            SizedBox(
+                              height: height * .01,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(width * .021),
+                                  decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(width * .041),
+                                      color: Color(0xffcfcfcf)),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.mail,
+                                    color: Color(0xff0c2954),
+                                  )),
+                                ),
+                                SizedBox(
+                                  width: width * .05,
+                                ),
+                                Text(userData['email'])
+                              ],
+                            ),
+                            SizedBox(
+                              height: height * .01,
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(width * .021),
+                                  decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(width * .041),
+                                      color: Color(0xffcfcfcf)),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.location_on,
+                                    color: Color(0xff0c2954),
+                                  )),
+                                ),
+                                SizedBox(
+                                  width: width * .05,
+                                ),
+                                Text(
+                                    '${userData['building_number']} ${userData['st_name']} st, ${userData['city']}')
+                              ],
+                            )
+                          ],
+                        ),
                       ),
-                    ),
+                    if (experience == true) Expanded(
+                        child: ListView(
+                          physics: BouncingScrollPhysics(),
+                          children: [
+                            for (int i = 0; i < userData['work_history'].length; i++)
+                              StreamBuilder<DocumentSnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('jobs')
+                                      .doc(userData['work_history'][i])
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError) {
+                                      return Text(
+                                          'Error loading data try again later');
+                                    }
+
+                                    if (!snapshot.hasData) {
+                                      return Center(child: CircularProgressIndicator());
+                                    }
+
+                                    var jobData =
+                                    snapshot.data!.data() as Map<String, dynamic>;
+                                    return Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(width * .023),
+                                          color: Colors.white),
+                                      padding: EdgeInsets.only(top: height * .03, bottom: height * .03, right: width * .03, left: width * .055),
+                                      margin: EdgeInsets.only(bottom: height * .01),
+                                      child: Row(
+                                        children: [
+                                          CachedNetworkImage(imageUrl: jobData['company_image'], width: width * .1,),
+                                          SizedBox(width: width * .03,),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(jobData['job_title'].split(" ")[0], style: TextStyle(fontSize: width * .041), overflow: TextOverflow.ellipsis,),
+                                              if(jobData['job_title'].split(" ").last != jobData['job_title'].split(" ")[0])Text(jobData['job_title'].split(" ").last ?? '', style: TextStyle(fontSize: width * .041), overflow: TextOverflow.ellipsis),
+                                              Text('at ${jobData['company_name']}', style: TextStyle(color: Colors.grey),)
+                                            ],
+                                          ),
+                                          SizedBox(width: width * .035,),
+                                          Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.yellow,
+                                                        borderRadius: BorderRadius.circular(width)
+                                                    ),
+                                                    width: width * .021,
+                                                    height: width * .021,
+                                                  ),
+                                                  Text(' ${jobData['period']}')
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: height * .03,
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  })
+                          ],
+                        ),
+                      ),
+                    if (review == true) Expanded(
+                        child: ListView(
+                          physics: BouncingScrollPhysics(),
+                          children: [
+                            for (int i = 0; i < userData['rates'].length; i++)
+                              StreamBuilder<DocumentSnapshot>(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('rates')
+                                      .doc(userData['rates'][i])
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError) {
+                                      return Text(
+                                          'Error loading data try again later');
+                                    }
+
+                                    if (!snapshot.hasData) {
+                                      return Center(child: CircularProgressIndicator());
+                                    }
+
+                                    var rateData =
+                                    snapshot.data!.data() as Map<String, dynamic>;
+                                    return Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(width * .023),
+                                          color: Colors.white),
+                                      padding: EdgeInsets.only(top: height * .03, bottom: height * .03, right: width * .03, left: width * .055),
+                                      margin: EdgeInsets.only(bottom: height * .01),
+                                      child: Row(
+                                        children: [
+                                          ClipRRect(
+                                              borderRadius: BorderRadius.circular(width * .015),
+                                              child: CachedNetworkImage(imageUrl: rateData['image'], width: width * .15, height: width * .15, fit: BoxFit.cover,)),
+                                          SizedBox(width: width * .03,),
+                                          SizedBox(
+                                              width: width * .55,
+                                              child: Text(rateData['comment'], softWrap: true, maxLines: 4, overflow: TextOverflow.ellipsis,))
+                                        ],
+                                      ),
+                                    );
+                                  })
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               );
