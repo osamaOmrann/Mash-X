@@ -31,29 +31,28 @@ dependencies:
   flutter:
     sdk: flutter
 
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  # UI
   cupertino_icons: ^1.0.2
+  loading_animation_widget: ^1.2.0+4
+  rounded_loading_button: ^2.1.0
+  font_awesome_flutter: ^10.5.0
+  intl_phone_field: ^3.2.0
+  flutter_custom_clippers: ^2.1.0
+
+  #LOGIC
   firebase_core: ^2.15.1
   cloud_firestore: ^4.9.1
   firebase_auth: ^4.9.0
   google_sign_in: ^6.1.5
-  loading_animation_widget: ^1.2.0+4
   shared_preferences: ^2.2.1
   provider: ^6.0.5
-  rounded_loading_button: ^2.1.0
-  font_awesome_flutter: ^10.5.0
   connectivity_plus: ^4.0.2
-  intl_phone_field: ^3.2.0
   cached_network_image: ^3.2.3
   path_provider: any
   flutter_cache_manager: any
   image_picker: ^1.0.4
   firebase_storage: any
-  google_maps_flutter: ^2.5.0
-  yandex_geocoder: ^2.1.0
-  flutter_custom_clippers: ^2.1.0
+  device_info_plus: ^9.0.3
 
 dev_dependencies:
   flutter_test:

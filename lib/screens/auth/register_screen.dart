@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -34,6 +35,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool isHuawei = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkDeviceType();
+  }
+
+  void checkDeviceType() async {
+    bool _isHuaweiDevice = await isHuaweiDevice();
+    setState(() {
+      isHuawei = _isHuaweiDevice;
+    });
+  }
+
+  Future<bool> isHuaweiDevice() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    return androidInfo.manufacturer.toLowerCase() == 'huawei';
+  }
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width,
@@ -240,8 +261,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    RoundedLoadingButton(
-                      controller: googleController,
+                    if(isHuawei == false) RoundedLoadingButton(
+                    controller: googleController,
                       onPressed: handleGoogleSignIn,
                       child: Icon(FontAwesomeIcons.google),
                       successColor: basicColor,

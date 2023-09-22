@@ -46,7 +46,7 @@ class _CompleteUserDataState extends State<CompleteUserData> {
   Future getData() async {
     var documentSnapshot = await FirebaseFirestore.instance
         .collection('users')
-        .doc(DataBase.user.uid)
+        .doc(DataBase.user?.uid)
         .get();
     var data = documentSnapshot.data();
     setState(() {
@@ -62,27 +62,18 @@ class _CompleteUserDataState extends State<CompleteUserData> {
     final sp = context.read<SignInProvider>();
     sp.getDataFromSharedPreferences();
     phoneController = TextEditingController(
-        text: (phone == null ||
-            phone == 'null' ||
-            phone == '')
-            ? ''
-            : phone);
+        text: (phone == null || phone == 'null' || phone == '') ? '' : phone);
     nameController = TextEditingController(text: name ?? '');
     emailController = TextEditingController(text: email ?? '');
     buildingController = TextEditingController(
-        text: (building == null || building == 0)
-            ? ''
-            : building.toString());
+        text: (building == null || building == 0) ? '' : building.toString());
     postalCodeController = TextEditingController(
-        text: (postal_code == 'null' ||
-            postal_code == null ||
-            postal_code == '')
-            ? ''
-            : postal_code);
+        text:
+            (postal_code == 'null' || postal_code == null || postal_code == '')
+                ? ''
+                : postal_code);
     cityController = TextEditingController(
-        text: (city == 'null' || city == null || city == '')
-            ? ''
-            : city);
+        text: (city == 'null' || city == null || city == '') ? '' : city);
     stController = TextEditingController(
         text: (st_name == 'null' || st_name == null || st_name == '')
             ? ''
@@ -578,21 +569,21 @@ class _CompleteUserDataState extends State<CompleteUserData> {
           }
           if (_formKey.currentState!.validate()) {
             DataBase.updateUserData(
-                DataBase.user.uid, 'name', nameController.text.trim());
+                DataBase.user!.uid, 'name', nameController.text.trim());
             DataBase.updateUserData(
-                DataBase.user.uid, 'email', emailController.text.trim());
+                DataBase.user!.uid, 'email', emailController.text.trim());
+            DataBase.updateUserData(DataBase.user!.uid, 'phone_number',
+                phoneController.text.trim());
             DataBase.updateUserData(
-                DataBase.user.uid, 'phone_number', phoneController.text.trim());
+                DataBase.user!.uid, 'city', cityController.text.trim());
             DataBase.updateUserData(
-                DataBase.user.uid, 'city', cityController.text.trim());
-            DataBase.updateUserData(
-                DataBase.user.uid, 'st_name', stController.text.trim());
-            DataBase.updateUserData(
-                DataBase.user.uid, 'building_number', int.parse(buildingController.text.trim()));
-            DataBase.updateUserData(
-                DataBase.user.uid, 'postal_code', postalCodeController.text.trim());
-            DataBase.updateUserData(
-                DataBase.user.uid, 'birth_date', selectedDate?.millisecondsSinceEpoch);
+                DataBase.user!.uid, 'st_name', stController.text.trim());
+            DataBase.updateUserData(DataBase.user!.uid, 'building_number',
+                int.parse(buildingController.text.trim()));
+            DataBase.updateUserData(DataBase.user!.uid, 'postal_code',
+                postalCodeController.text.trim());
+            DataBase.updateUserData(DataBase.user!.uid, 'birth_date',
+                selectedDate?.millisecondsSinceEpoch);
             sp.saveDataToSharedPreferences();
             saveController.success();
             Future.delayed(Duration(milliseconds: 1000)).then((value) {

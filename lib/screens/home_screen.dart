@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _getValues() async {
     var documentSnapshot = await FirebaseFirestore.instance
         .collection('users')
-        .doc(DataBase.user.uid)
+        .doc(DataBase.user?.uid)
         .get();
     var data = documentSnapshot.data();
     userImage = await data!['image_url'];
@@ -91,8 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Text(
                       'X',
-                      style:
-                          TextStyle(fontSize: width * .085, color: Colors.red, fontFamily: 'denala', fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: width * .085,
+                          color: Colors.red,
+                          fontFamily: 'denala',
+                          fontWeight: FontWeight.bold),
                     ),
                     Spacer(),
                     IconButton(
@@ -300,11 +303,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         'eine Woche Arbeit:',
                         style: TextStyle(fontSize: width * .05),
                       ),
-                      SizedBox(height: height * .015,),
+                      SizedBox(
+                        height: height * .015,
+                      ),
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection('users')
-                            .doc(DataBase.user.uid)
+                            .doc(DataBase.user?.uid)
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
@@ -319,10 +324,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
 
                           var userData =
-                              snapshot.data!.data() as Map<String, dynamic>;
+                              snapshot.data?.data() as Map<String, dynamic>;
                           return Column(
                             children: [
-                              for (int i = 0; i < 21; i ++) JobCard(userData['image_url']),
+                              for (int i = 0; i < 21; i++)
+                                JobCard(userData['image_url']),
                             ],
                           );
                         },

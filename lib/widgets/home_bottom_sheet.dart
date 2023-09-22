@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mash/data_base/data_base.dart';
-import 'package:mash/data_base/sign_in_provider.dart';
 import 'package:mash/helpers/next_screen.dart';
 import 'package:mash/main.dart';
 import 'package:mash/models/job.dart';
@@ -10,7 +9,6 @@ import 'package:mash/screens/profile_screen.dart';
 import 'package:mash/screens/settings_screen.dart';
 import 'package:mash/screens/store_screen.dart';
 import 'package:mash/widgets/job_offer_widget.dart';
-import 'package:provider/provider.dart';
 
 class HomeBottomSheet extends StatelessWidget {
   String userImage;
@@ -20,9 +18,7 @@ class HomeBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width,
         height = MediaQuery.of(context).size.height;
-    final sp = context.watch<SignInProvider>();
     return Container(
-      height: height * .685,
       padding: EdgeInsets.only(
         left: width * .039,
         right: width * .039,
@@ -35,7 +31,7 @@ class HomeBottomSheet extends StatelessWidget {
             children: [
               SizedBox(width: width * .03,),
               GestureDetector(
-                onTap: () {nextScreen(context, UserProfilePage(DataBase.user.uid));},
+                onTap: () {nextScreen(context, UserProfilePage(DataBase.user!.uid));},
                 child: CircleAvatar(
                   backgroundColor: Colors.transparent,
                   backgroundImage: NetworkImage(userImage),

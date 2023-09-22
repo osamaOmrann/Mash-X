@@ -12,7 +12,7 @@ import 'package:mash/models/rate.dart';
 class DataBase {
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  static User get user => FirebaseAuth.instance.currentUser!;
+  static User? get user => FirebaseAuth.instance.currentUser;
 
   static CollectionReference<Product> getProductsCollection() {
     return FirebaseFirestore.instance
@@ -36,7 +36,7 @@ class DataBase {
     log('Extensions: $ext');
     final ref = FirebaseStorage.instance
         .ref()
-        .child('profile_pictures/${user.uid}.$ext');
+        .child('profile_pictures/${user?.uid}.$ext');
     await ref
         .putFile(file, SettableMetadata(contentType: 'image/$ext'))
         .then((p0) {
@@ -45,7 +45,7 @@ class DataBase {
     String image = await ref.getDownloadURL();
     await FirebaseFirestore.instance
         .collection('users')
-        .doc(user.uid)
+        .doc(user?.uid)
         .update({'image_url': image});
   }
 

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -14,6 +13,7 @@ import 'package:mash/screens/auth/register_screen.dart';
 import 'package:mash/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -34,6 +34,26 @@ class _LoginScreenState extends State<LoginScreen> {
   bool securePassword = true;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool isHuawei = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkDeviceType();
+  }
+
+  void checkDeviceType() async {
+    bool _isHuaweiDevice = await isHuaweiDevice();
+    setState(() {
+      isHuawei = _isHuaweiDevice;
+    });
+  }
+
+  Future<bool> isHuaweiDevice() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    return androidInfo.manufacturer.toLowerCase() == 'huawei';
+  }
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width,
@@ -173,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    RoundedLoadingButton(
+                    if(isHuawei == false) RoundedLoadingButton(
                       controller: googleController,
                       onPressed: handleGoogleSignIn,
                       child: Icon(FontAwesomeIcons.google),
