@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,7 +12,9 @@ import 'package:mash/models/company.dart';
 import 'package:mash/models/job.dart';
 import 'package:mash/screens/auth/login_screen.dart';
 import 'package:mash/screens/complete_user_date.dart';
-import 'package:mash/widgets/home_bottom_sheet.dart';
+import 'package:mash/screens/profile_screen.dart';
+import 'package:mash/screens/settings_screen.dart';
+import 'package:mash/screens/store_screen.dart';
 import 'package:mash/widgets/job_card.dart';
 import 'package:mash/widgets/job_offer_widget.dart';
 import 'package:provider/provider.dart';
@@ -100,10 +102,138 @@ class _HomeScreenState extends State<HomeScreen> {
                     Spacer(),
                     IconButton(
                         onPressed: () {
-                          showModalBottomSheet(
-                              isScrollControlled: true,
-                              context: context,
-                              builder: (_) => HomeBottomSheet(userImage));
+                          showStickyFlexibleBottomSheet(
+                            bottomSheetColor: Colors.white,
+                            minHeight: 0,
+                            initHeight: 0.7,
+                            maxHeight: 1,
+                            headerHeight: 200,
+                            context: context,
+                            headerBuilder: (BuildContext context, double offset) {
+                              return Container(
+                                padding: EdgeInsets.only(
+                                    left: width * .039,
+                                    right: width * .039,
+                                    top: height * .021
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SizedBox(width: width * .03,),
+                                        GestureDetector(
+                                          onTap: () {nextScreen(context, UserProfilePage(DataBase.user!.uid));},
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.transparent,
+                                            backgroundImage: NetworkImage(userImage),
+                                            radius: width * .061,
+                                          ),
+                                        ),
+                                        SizedBox(height: width * 0.09, width: width *.05,),
+                                        Container(
+                                          height: width * 0.09,
+                                          width: width * .003,
+                                          color: Colors.black,
+                                        ),
+                                        SizedBox(height: width * 0.09),
+                                        SizedBox(width: width * .065,),
+                                        Image.asset('assets/images/cs.png', width: width * .081,),
+                                        SizedBox(width: width * .065,),
+                                        GestureDetector(
+                                            onTap: () {nextScreen(context, StoreScreen());},
+                                            child: Image.asset('assets/images/bag.png', width: width * .081,)),
+                                        SizedBox(width: width * .061,),
+                                        GestureDetector(
+                                            onTap: () {nextScreen(context, Settings_Screen());},
+                                            child: Icon(Icons.settings, color: Color(0xff3392ee), size: width * .09,)),
+                                        SizedBox(width: width * .06,),
+                                        Image.asset('assets/images/telegram.png', width: width * .081,),
+                                        Spacer(),
+                                        GestureDetector(
+                                            onTap: () {Navigator.pop(context);},
+                                            child: Icon(CupertinoIcons.chevron_down, color: Color(0xff96a8f1),))
+                                      ],
+                                    ),
+                                    SizedBox(height: height * .035,),
+                                    Text('    Wählen Sie Lhre Stadt'),
+                                    SizedBox(height: height * .005,),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: width * .05, vertical: height * .01),
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.grey),
+                                          borderRadius: BorderRadius.circular(width * .07)
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image.asset('assets/images/location.png', width: width * .065,),
+                                          Text('Adresse', style: TextStyle(color: Colors.grey),)
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            bodyBuilder: (BuildContext context, double offset) {
+                              return SliverChildListDelegate(
+                                <Widget>[
+                                  Text('Menü:', style: TextStyle(fontSize: width * .055),),
+                                  SizedBox(height: height * .019,),
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        left: width * .039,
+                                        right: width * .039,
+                                        top: height * .021
+                                    ),
+                                    child: Expanded(child: StreamBuilder<QuerySnapshot<Job>>(
+                                      builder: (buildContext, snapshot) {
+                                        if (snapshot.hasError) {
+                                          return Center(
+                                            child:
+                                            Text('Error loading date try again later'),
+                                          );
+                                        } else if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                                color: basicColor),
+                                          );
+                                        }
+                                        var data = snapshot.data?.docs
+                                            .map((e) => e.data())
+                                            .toList();
+
+                                        return SizedBox(
+                                          height: height * .75,
+                                          child: ListView(
+                                            children: [
+                                              for(int i = 0; i < data!.length; i++) Padding(
+                                            padding: EdgeInsets.only(bottom: height * .017),
+                                            child: JobOfferWidget(data[i]),
+                                          ),for(int i = 0; i < data!.length; i++) Padding(
+                                            padding: EdgeInsets.only(bottom: height * .017),
+                                            child: JobOfferWidget(data[i]),
+                                          ),for(int i = 0; i < data!.length; i++) Padding(
+                                            padding: EdgeInsets.only(bottom: height * .017),
+                                            child: JobOfferWidget(data[i]),
+                                          ),for(int i = 0; i < data!.length; i++) Padding(
+                                            padding: EdgeInsets.only(bottom: height * .017),
+                                            child: JobOfferWidget(data[i]),
+                                          ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      stream: DataBase.listenForJobsRealTimeUpdatesStream(),
+                                    )),
+                                  )
+                                ],
+                              );
+                            },
+                            anchors: [0, 0.5, 1],
+                          );
                         },
                         icon: Icon(
                           Icons.menu,

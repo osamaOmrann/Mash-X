@@ -215,7 +215,7 @@ class SignInProvider extends ChangeNotifier {
       'job_success': _jobSuccess ?? 0,
       'stars': _stars ?? 0,
       'salary': _salary ?? 0,
-      'about': _about ?? 0,
+      'about': _about ?? '',
     });
     notifyListeners();
   }

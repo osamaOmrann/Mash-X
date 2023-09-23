@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -349,39 +350,71 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
     sp.userSignOut();
-    sp.firebaseAuth
-        .createUserWithEmailAndPassword(
-            email: emailController.text, password: passwordController.text)
-        .then((userCredential) async {
-      if (sp.hasError == true) {
-        openSnackBar(context, sp.errorCode.toString(), basicColor);
+    /*try {
+      var acs = ActionCodeSettings(
+        // URL you want to redirect back to. The domain (www.example.com) for this
+        // URL must be whitelisted in the Firebase Console.
+          url: 'https://mash.page.link/eNh4?email=${emailController.text}',
+          // This must be true
+          handleCodeInApp: true,
+          iOSBundleId: 'com.example.mash',
+          androidPackageName: 'com.example.mash',
+          // installIfNotAvailable
+          androidInstallApp: true,
+          // minimumVersion
+          androidMinimumVersion: '12');
+      sp.firebaseAuth.sendSignInLinkToEmail(email: emailController.text, actionCodeSettings: acs).catchError((onError) => log('Error sending email verification $onError'))
+          .then((value) => log('Successfully sent email verification'));
+      if (FirebaseAuth.instance.isSignInWithEmailLink('https://mash.page.link/eNh4?email=${emailController.text}')) {
+        try {
+          // The client SDK will parse the code from the link for you.
+          final userCredential = await FirebaseAuth.instance
+              .signInWithEmailLink(email: emailController.text, emailLink: 'https://mash.page.link/eNh4?email=${emailController.text}');
+
+          // You can access the new user via userCredential.user.
+          final emailAddress = userCredential.user?.email;
+
+          print('Successfully signed in with email link!');
+        } catch (error) {
+          print('Error signing in with email link.');
+        }
+      }*/
+          sp.firebaseAuth.createUserWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text)
+          .then((userCredential) async {
+        if (sp.hasError == true) {
+          openSnackBar(context, sp.errorCode.toString(), basicColor);
+          registerController.reset();
+        } else {
+          User user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: emailController.text,
+                  password: passwordController.text))
+              .user!;
+          sp.emailPasswordUser(user, emailController.text, nameController.text,
+              passwordController.text);
+          sp.saveDataToFireStore().then((value) => sp
+              .saveDataToSharedPreferences()
+              .then((value) => sp.setSignIn().then((value) {
+                    registerController.success();
+                    handleAfterSigningIn();
+                  })));
+        }
+      }).onError((error, stackTrace) {
+        if (error
+            .toString()
+            .contains('The email address is already in use by another account'))
+          openSnackBar(
+              context,
+              'The email address is already in use by another account',
+              basicColor);
+        if (error.toString().contains('badly formatted'))
+          openSnackBar(context, 'Enter a valid email address', basicColor);
+        else
+          openSnackBar(context, error.toString(), basicColor);
         registerController.reset();
-      } else {
-        User user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
-                email: emailController.text, password: passwordController.text))
-            .user!;
-        sp.emailPasswordUser(user, emailController.text, nameController.text,
-            passwordController.text);
-        sp.saveDataToFireStore().then((value) => sp
-            .saveDataToSharedPreferences()
-            .then((value) => sp.setSignIn().then((value) {
-                  registerController.success();
-                  handleAfterSigningIn();
-                })));
-      }
-    }).onError((error, stackTrace) {
-      if (error
-          .toString()
-          .contains('The email address is already in use by another account'))
-        openSnackBar(
-            context,
-            'The email address is already in use by another account',
-            basicColor);
-      if (error.toString().contains('badly formatted'))
-        openSnackBar(context, 'Enter a valid email address', basicColor);
-      else
-        openSnackBar(context, error.toString(), basicColor);
-      registerController.reset();
-    });
+      });
+    /*} catch (e) {
+      log(e.toString());
+    }*/
   }
 }
