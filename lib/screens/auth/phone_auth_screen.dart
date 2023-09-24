@@ -98,6 +98,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
               SizedBox(height: height * .03),
               TextFormField(
                 controller: emailController,
+                keyboardType: TextInputType.emailAddress,
                 validator: (text) {
                   if (text == null || text.trim().isEmpty) {
                     return 'Please enter e-mail address';

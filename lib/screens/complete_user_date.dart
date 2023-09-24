@@ -24,7 +24,8 @@ class CompleteUserData extends StatefulWidget {
 
 class _CompleteUserDataState extends State<CompleteUserData> {
   String? _picked_image;
-  String image = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  String userImage = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+  String provider = '';
   String name = '';
   String phone = '';
   String email = '';
@@ -51,9 +52,10 @@ class _CompleteUserDataState extends State<CompleteUserData> {
         .get();
     var data = documentSnapshot.data();
     setState(() {
-      image = data!['image_url'];
+      userImage = data!['image_url'];
     });
-    name = data!['name'];
+    provider = data!['provider'];
+    name = data['name'];
     phone = data['phone_number'];
     email = data['email'];
     building = data['building_number'];
@@ -137,7 +139,7 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                               width: double.infinity,
                               height: height * .3,
                               filterQuality: FilterQuality.high,
-                              imageUrl: image,
+                              imageUrl: userImage,
                               fit: BoxFit.cover,
                               errorWidget: (context, url, error) =>
                                   CircleAvatar(
@@ -236,7 +238,7 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                                 child: CachedNetworkImage(
                                   width: height * .15,
                                   height: height * .15,
-                                  imageUrl: image,
+                                  imageUrl: userImage,
                                   fit: BoxFit.cover,
                                   errorWidget: (context, url, error) =>
                                       CircleAvatar(
@@ -557,6 +559,11 @@ class _CompleteUserDataState extends State<CompleteUserData> {
         color: basicColor,
         successColor: basicColor,
         onPressed: () async {
+          if (provider != 'GOOGLE' && _picked_image == null) {
+            openSnackBar(context, 'Please insert your photo', basicColor);
+            saveController.reset();
+            return;
+          }
           if (selectedDate == null || selectedDate == DateTime.now()) {
             openSnackBar(context, 'Please complete your data', basicColor);
             saveController.reset();
@@ -654,6 +661,8 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                           log('Image Path: ${image.path}');
                           setState(() {
                             _picked_image = image.path;
+                           userImage = _picked_image ?? '';
+                           log('${userImage} ---------- ');
                           });
                           DataBase.updateProfilePicture(File(_picked_image!));
                           Navigator.pop(context);

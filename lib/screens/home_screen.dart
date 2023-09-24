@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
-              .doc(DataBase.user!.uid)
+              .doc(DataBase.user?.uid)
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
@@ -320,39 +320,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 height: height * .75,
                                                 child: ListView(
                                                   children: [
-                                                    for (int i = 0;
-                                                        i < data!.length;
-                                                        i++)
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: height *
-                                                                    .017),
-                                                        child: JobOfferWidget(
-                                                            data[i]),
-                                                      ),
-                                                    for (int i = 0;
-                                                        i < data!.length;
-                                                        i++)
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: height *
-                                                                    .017),
-                                                        child: JobOfferWidget(
-                                                            data[i]),
-                                                      ),
-                                                    for (int i = 0;
-                                                        i < data!.length;
-                                                        i++)
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: height *
-                                                                    .017),
-                                                        child: JobOfferWidget(
-                                                            data[i]),
-                                                      ),
                                                     for (int i = 0;
                                                         i < data!.length;
                                                         i++)
