@@ -5,12 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mash/data_base/data_base.dart';
-import 'package:mash/main.dart';
-import 'package:mash/models/company.dart';
-import 'package:mash/models/rate.dart';
+import 'package:mash/helpers/validation_utils.dart';
 
 class UserProfilePage extends StatefulWidget {
   final String userId;
@@ -23,10 +21,13 @@ class UserProfilePage extends StatefulWidget {
 
 class _UserProfilePageState extends State<UserProfilePage> {
   String? _picked_image;
-  TextEditingController skillController = TextEditingController();
-  TextEditingController jobController = TextEditingController();
+  TextEditingController aboutController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController stController = TextEditingController();
+  TextEditingController buildingController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey();
-  GlobalKey<FormState> _jobFormKey = GlobalKey();
   bool userInfo = true, experience = false, review = false;
 
   @override
@@ -360,10 +361,32 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       fontSize: width * .043),
                                 ),
                                 Spacer(),
-                                Text(
-                                  'Edit',
-                                  style:
-                                      TextStyle(color: Colors.yellow.shade700),
+                                InkWell(
+                                  onTap: () {
+                                    showDialog(context: context, builder: (_) {
+                                      aboutController = TextEditingController(text: userData['about']);                                      return AlertDialog(
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                DataBase.updateUserData(DataBase.user!.uid, 'about', aboutController.text.trim());
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text('Confirm'))
+                                        ],
+                                        content: TextFormField(
+                                          controller: aboutController,
+                                          decoration: InputDecoration(
+                                            labelText: 'About yourself'
+                                          ),
+                                        ),
+                                      );
+                                    });
+                                  },
+                                  child: Text(
+                                    'Edit',
+                                    style:
+                                        TextStyle(color: Colors.yellow.shade700),
+                                  ),
                                 )
                               ],
                             ),
@@ -398,10 +421,128 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                       fontSize: width * .043),
                                 ),
                                 Spacer(),
-                                Text(
-                                  'Edit',
-                                  style:
-                                      TextStyle(color: Colors.yellow.shade700),
+                                InkWell(
+                                  onTap: () {
+                                    showDialog(
+                                        context: context, builder: (_) {
+                                          phoneController = TextEditingController(text: userData['phone_number']);
+                                          emailController = TextEditingController(text: userData['email']);
+                                          cityController = TextEditingController(text: userData['city']);
+                                          stController = TextEditingController(text: userData['st_name']);
+                                          buildingController = TextEditingController(text: userData['building_number'].toString());
+                                      return Form(
+                                        key: _formKey,
+                                        child: AlertDialog(
+                                          actions: [
+                                            TextButton(onPressed: () async {
+                                              if (_formKey.currentState!.validate()) {
+                                                DataBase.updateUserData(DataBase.user!.uid, 'phone_number', phoneController.text.trim());
+                                                DataBase.updateUserData(DataBase.user!.uid, 'email', emailController.text.trim());
+                                                DataBase.updateUserData(DataBase.user!.uid, 'city', cityController.text.trim());
+                                                DataBase.updateUserData(DataBase.user!.uid, 'st_name', stController.text.trim());
+                                                List<Location> location = await locationFromAddress('Germany, ${cityController.text.trim()}, ${stController.text.trim()}');
+                                                DataBase.updateUserData(DataBase.user!.uid, 'lat', location.last.latitude.toString());
+                                                DataBase.updateUserData(DataBase.user!.uid, 'lng', location.last.longitude.toString());
+                                                DataBase.updateUserData(DataBase.user!.uid, 'building_number', buildingController.text.trim());
+                                                Navigator.pop(context);
+                                              } else {
+                                                return;
+                                              }
+                                            }, child: Text('Save'))
+                                          ],
+                                          content: Container(
+                                            height: height * .5,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                TextFormField(
+                                                  controller: phoneController,
+                                                  keyboardType: TextInputType.phone,
+                                                validator: (text) {
+                                                  if (text == null || text.trim().isEmpty) {
+                                                    return 'Please enter your phone number';
+                                                  }
+                                                  if (text.trim().length < 5) {
+                                                    return 'Please enter a valid phone number';
+                                                  }
+                                                  return null;
+                                                },
+                                                  decoration: InputDecoration(
+                                                    labelText: 'Phone number'
+                                                  ),
+                                                ),
+                                                TextFormField(
+                                                  keyboardType: TextInputType.emailAddress,
+                                                  controller: emailController,
+                                                  validator: (text) {
+                                                    if (text == null || text.trim().isEmpty) {
+                                                      return 'Please enter e-mail address';
+                                                    }
+                                                    if (!ValidationUtils.isValidEmail(text)) {
+                                                      return 'Please enter a valid email';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  decoration: InputDecoration(
+                                                    labelText: 'Email adress'
+                                                  ),
+                                                ),
+                                                TextFormField(
+                                                  controller: cityController,
+                                                  validator: (text) {
+                                                    if (text == null || text.trim().isEmpty) {
+                                                      return 'Please enter your city';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  maxLength: 17,
+                                                  decoration: InputDecoration(
+                                                      counterText: "",
+                                                    labelText: 'City'
+                                                  ),
+                                                ),
+                                                TextFormField(
+                                                  controller: stController,
+                                                  validator: (text) {
+                                                    if (text == null || text.trim().isEmpty) {
+                                                      return 'Please enter your street name';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  maxLength: 37,
+                                                  decoration: InputDecoration(
+                                                      counterText: "",
+                                                    labelText: 'Street name'
+                                                  ),
+                                                ),
+                                                TextFormField(
+                                                  controller: buildingController,
+                                                  validator: (text) {
+                                                    if (text == null || text.trim().isEmpty) {
+                                                      return 'Please enter your building number';
+                                                    }
+                                                    return null;
+                                                  },
+                                                  keyboardType: TextInputType.number,
+                                                  maxLength: 5,
+                                                  decoration: InputDecoration(
+                                                    hintMaxLines: 1,
+                                                    counterText: "",
+                                                    labelText: 'Building number',
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    });
+                                  },
+                                  child: Text(
+                                    'Edit',
+                                    style:
+                                        TextStyle(color: Colors.yellow.shade700),
+                                  ),
                                 )
                               ],
                             ),

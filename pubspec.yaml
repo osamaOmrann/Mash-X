@@ -55,6 +55,7 @@ dependencies:
   firebase_storage: any
   device_info_plus: ^9.0.3
   firebase_dynamic_links: ^5.3.6
+  geocoding: ^2.1.0
 
 dev_dependencies:
   flutter_test:

@@ -15,6 +15,7 @@ import 'package:mash/screens/auth/login_screen.dart';
 import 'package:mash/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:geocoding/geocoding.dart';
 
 class CompleteUserData extends StatefulWidget {
   @override
@@ -555,13 +556,7 @@ class _CompleteUserDataState extends State<CompleteUserData> {
         controller: saveController,
         color: basicColor,
         successColor: basicColor,
-        onPressed: () {
-          /*if (image ==
-              'https://cdn-icons-png.flaticon.com/512/149/149071.png') {
-            openSnackBar(context, 'Please insert your photo', basicColor);
-            saveController.reset();
-            return;
-          }*/
+        onPressed: () async {
           if (selectedDate == null || selectedDate == DateTime.now()) {
             openSnackBar(context, 'Please complete your data', basicColor);
             saveController.reset();
@@ -578,6 +573,9 @@ class _CompleteUserDataState extends State<CompleteUserData> {
                 DataBase.user!.uid, 'city', cityController.text.trim());
             DataBase.updateUserData(
                 DataBase.user!.uid, 'st_name', stController.text.trim());
+            List<Location> location = await locationFromAddress('Germany, ${cityController.text.trim()}, ${stController.text.trim()}');
+            DataBase.updateUserData(DataBase.user!.uid, 'lat', location.last.latitude.toString());
+            DataBase.updateUserData(DataBase.user!.uid, 'lng', location.last.longitude.toString());
             DataBase.updateUserData(DataBase.user!.uid, 'building_number',
                 int.parse(buildingController.text.trim()));
             DataBase.updateUserData(DataBase.user!.uid, 'postal_code',

@@ -81,6 +81,12 @@ class SignInProvider extends ChangeNotifier {
   String? _about;
   String? get about => _about;
 
+  String? _lat;
+  String? get lat => _lat;
+
+  String? _lng;
+  String? get lng => _lng;
+
   SignInProvider() {
     checkSignInUser();
   }
@@ -178,6 +184,8 @@ class SignInProvider extends ChangeNotifier {
         _stars = snapshot.get('stars') ?? 0;
         _salary = snapshot.get('salary') ?? 0;
         _about = snapshot.get('about') ?? '';
+        _lat = snapshot.get('lat') ?? '';
+        _lng = snapshot.get('lng') ?? '';
       } else {
         // Handle the case where the document does not exist
         // For example, you can throw an exception or show an error message
@@ -216,6 +224,8 @@ class SignInProvider extends ChangeNotifier {
       'stars': _stars ?? 0,
       'salary': _salary ?? 0,
       'about': _about ?? '',
+      'lat': _lat ?? '',
+      'lng': _lng ?? '',
     });
     notifyListeners();
   }
@@ -243,6 +253,8 @@ class SignInProvider extends ChangeNotifier {
     await s.setDouble('stars', _stars ?? 0);
     await s.setInt('salary', _salary ?? 0);
     await s.setString('about', _about ?? '');
+    await s.setString('lat', _lat ?? '');
+    await s.setString('lng', _lng ?? '');
     notifyListeners();
   }
 
@@ -270,6 +282,8 @@ class SignInProvider extends ChangeNotifier {
     _stars = s.getDouble('stars');
     _salary = s.getInt('salary');
     _about = s.getString('about');
+    _lat = s.getString('lat');
+    _lng = s.getString('lng');
     notifyListeners();
   }
 

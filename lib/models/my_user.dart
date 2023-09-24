@@ -8,7 +8,10 @@ class MyUser {
       city,
       st_name,
       postal_code,
-      job_title, about;
+      job_title,
+      about,
+      lat,
+      lng;
   int? phone_number, building_number, salary;
   DateTime? birth_date;
   List? rates, work_history, skills, intended_jobs;
@@ -33,7 +36,10 @@ class MyUser {
       this.job_title,
       this.job_success,
       this.stars,
-      this.salary, this.about});
+      this.salary,
+      this.about,
+      this.lat,
+      this.lng});
 
   MyUser.fromFireStore(Map<String, dynamic> data)
       : this(
@@ -55,8 +61,10 @@ class MyUser {
             job_success: data['job_success'],
             stars: data['stars'],
             salary: data['salary'],
-      about: data['about'],
-            job_title: data['job_title']);
+            about: data['about'],
+            job_title: data['job_title'],
+            lat: data['lat'],
+            lng: data['lng']);
 
   Map<String, dynamic> toFireStore() {
     return {
@@ -79,7 +87,9 @@ class MyUser {
       'job_success': job_success,
       'stars': stars,
       'salary': salary,
-      'about': about
+      'about': about,
+      'lat': lat,
+      'lng': lng
     };
   }
 }
